@@ -1,3 +1,8 @@
+// Delft Mercurians
+// Thomas Hettasch
+// 2023-06-05
+// thomas.hettasch@gmail.com
+
 #pragma once
 #include <map>
 
