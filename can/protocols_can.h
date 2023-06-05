@@ -6,13 +6,15 @@
 #pragma once
 #include <map>
 
-#define GENERATE_MESSAGE_ID_(variable, access) ((uint32_t) variable | (uint32_t) access)
-#define GENERATE_MESSAGE_ID(variable, access) (CAN_MESSAGE_ID) (GENERATE_MESSAGE_ID_(variable, access))
+namespace CAN {
+
+#define CAN_GENERATE_MESSAGE_ID_(variable, access) ((uint32_t) variable | (uint32_t) access)
+#define CAN_GENERATE_MESSAGE_ID(variable, access) (CAN::MESSAGE_ID) (CAN_GENERATE_MESSAGE_ID_(variable, access))
 
 #define UPPER_LIMIT (1e5)
 #define LOWER_LIMIT (-UPPER_LIMIT)
 
-enum class CAN_DEVICE_ID {
+enum class DEVICE_ID {
     PRIMARY = 0xF0,     // Main device on bus, coordinates all other devices (high priority messages)
 
     ALL = 0xFF,         // Send message to all devices (highest priority)
@@ -37,22 +39,22 @@ enum class CAN_DEVICE_ID {
     DRIVER_C5 = 0x0F,    // Motor driver 5
 };
 
-enum class CAN_VARIABLE {
+enum class VARIABLE {
     POSITION = 0x00,
     SPEED = 0x01,
     TORQUE = 0x02,
     MASK = 0x0F,
 };
 
-#define VARIABLE_TYPE float
+#define CAN_VARIABLE_TYPE float
 
-enum class CAN_ACCESS {
+enum class ACCESS {
     READ = 0xB0,
     WRITE = 0xA0,
     MASK = 0xF0,
 };
 
-enum class CAN_MESSAGE_ID {
+enum class MESSAGE_ID {
     ANNOUNCE = 0x00,        // Use for announcing presence on bus
     REQ_ANNOUNCE = 0x01,    // Use for requesting announcing presence on bus
 
@@ -60,9 +62,9 @@ enum class CAN_MESSAGE_ID {
 
     LED_SET_DUTY = 0x11,    // Set led blink duty cycle
 
-    SET_POSITION = GENERATE_MESSAGE_ID_(CAN_VARIABLE::POSITION, CAN_ACCESS::WRITE),    // Set a motor driver's position setpoint
-    SET_SPEED = GENERATE_MESSAGE_ID_(CAN_VARIABLE::SPEED, CAN_ACCESS::WRITE),       // Set a motor driver's speed setpoint
-    SET_TORQUE = GENERATE_MESSAGE_ID_(CAN_VARIABLE::TORQUE, CAN_ACCESS::WRITE),      // Set a motor driver's torque setpoint
+    SET_POSITION = CAN_GENERATE_MESSAGE_ID_(VARIABLE::POSITION, ACCESS::WRITE),    // Set a motor driver's position setpoint
+    SET_SPEED = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED, ACCESS::WRITE),       // Set a motor driver's speed setpoint
+    SET_TORQUE = CAN_GENERATE_MESSAGE_ID_(VARIABLE::TORQUE, ACCESS::WRITE),      // Set a motor driver's torque setpoint
 
     SYNC = 0xF6,            // Synchronise clocks
 
@@ -70,15 +72,17 @@ enum class CAN_MESSAGE_ID {
     STOP = 0xF0,            // Gracefull stop all drivers (high priority)
 };
 
-const std::map<uint32_t, CAN_DEVICE_ID> DEVICE_ID_MAP {
-    {0x200034, CAN_DEVICE_ID::DRIVER_A1},
-    {0x230034, CAN_DEVICE_ID::DRIVER_A2},
-    {0x370033, CAN_DEVICE_ID::DRIVER_A3},
-    {0x220027, CAN_DEVICE_ID::DRIVER_A4},
+const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
+    {0x200034, DEVICE_ID::DRIVER_A1},
+    {0x230034, DEVICE_ID::DRIVER_A2},
+    {0x370033, DEVICE_ID::DRIVER_A3},
+    {0x220027, DEVICE_ID::DRIVER_A4},
 };
 
 
 
-#define PP_MAKE_CAN_ID(Device, Message)     (((uint16_t) Device<<8) | (uint16_t) Message) 
-#define PP_GET_MESSAGE_ID(CanID)            (CAN_MESSAGE_ID) (CanID & 0xff)
-#define PP_GET_DEVICE_ID(CanID)             (CAN_DEVICE_ID) (CanID>>8)
+#define CAN_MAKE_ID(Device, Message)     (((uint16_t) Device<<8) | (uint16_t) Message) 
+#define CAN_MAKE_MESSAGE_ID(CanID)            (CAN::MESSAGE_ID) (CanID & 0xff)
+#define CAN_GET_DEVICE_ID(CanID)             (CAN::DEVICE_ID) (CanID>>8)
+
+}
