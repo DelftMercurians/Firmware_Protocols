@@ -40,18 +40,61 @@ enum class DEVICE_ID {
 };
 
 enum class VARIABLE {
-    POSITION = 0x00,
-    SPEED = 0x01,
-    TORQUE = 0x02,
-    MASK = 0x0F,
+    ENABLE = 0x00,
+    
+    POSITION = 0x01,
+    SPEED = 0x02,
+    TORQUE = 0x03,
+    TORQUE_FF = 0x04,
+    
+    MOTION_TYPE = 0x10, // Motion control type (voltage, velocity, angle, ol_velocity, ol_angle)
+    TORQUE_TYPE = 0x11, // Torque control type (voltage, dc_current, foc_current)
+    
+    LIM_C = 0x18,       // Current limit
+    LIM_U = 0x19,       // Voltage limit
+    LIM_V = 0x20,       // Speed limit
+    
+    // Current D
+    PID_CD_P = 0x20,    // Proportional
+    PID_CD_I = 0x21,    // Integral
+    PID_CD_D = 0x22,    // Derivative
+    PID_CD_R = 0x23,    // Ramp
+    PID_CD_L = 0x24,    // Limit
+    PID_CD_F = 0x25,    // LPF time constant
+    
+    // Current Q
+    PID_CQ_P = 0x28,
+    PID_CQ_I = 0x29,
+    PID_CQ_D = 0x2A,
+    PID_CQ_R = 0x2B,
+    PID_CQ_L = 0x2C,
+    PID_CQ_F = 0x2D,
+    
+    // Velocity
+    PID_V_P = 0x30,
+    PID_V_I = 0x31,
+    PID_V_D = 0x32,
+    PID_V_R = 0x33,
+    PID_V_L = 0x34,
+    PID_V_F = 0x35,
+    
+    // Angle
+    PID_A_P = 0x38,
+    PID_A_I = 0x39,
+    PID_A_D = 0x3A,
+    PID_A_R = 0x3B,
+    PID_A_L = 0x3C,
+    PID_A_F = 0x3D,
+    
+    MASK = 0x3F,
 };
 
 #define CAN_VARIABLE_TYPE float
 
 enum class ACCESS {
-    READ = 0xB0,
-    WRITE = 0xA0,
-    MASK = 0xF0,
+    READ = 0x40,
+    WRITE = 0x80,
+    MASK = 0xC0,
 };
 
 enum class MESSAGE_ID {
@@ -65,6 +108,10 @@ enum class MESSAGE_ID {
     SET_POSITION = CAN_GENERATE_MESSAGE_ID_(VARIABLE::POSITION, ACCESS::WRITE),    // Set a motor driver's position setpoint
     SET_SPEED = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED, ACCESS::WRITE),       // Set a motor driver's speed setpoint
     SET_TORQUE = CAN_GENERATE_MESSAGE_ID_(VARIABLE::TORQUE, ACCESS::WRITE),      // Set a motor driver's torque setpoint
+    
+    GET_POSITION = CAN_GENERATE_MESSAGE_ID_(VARIABLE::POSITION, ACCESS::READ),    // Get the encoder position
+    GET_SPEED = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED, ACCESS::READ),       // Get encoder speed
+    GET_TORQUE = CAN_GENERATE_MESSAGE_ID_(VARIABLE::TORQUE, ACCESS::READ),      // Get current torque output
 
     SYNC = 0xF6,            // Synchronise clocks
 
