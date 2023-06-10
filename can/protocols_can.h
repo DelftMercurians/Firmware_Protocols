@@ -20,23 +20,23 @@ enum class DEVICE_ID {
     ALL = 0xFF,         // Send message to all devices (highest priority)
     ANY = 0x00,         // Send message to all devices (lowest priority messages)
 
-    DRIVER_A1 = 0x01,    // Motor driver 1
-    DRIVER_A2 = 0x02,    // Motor driver 2
-    DRIVER_A3 = 0x03,    // Motor driver 3
-    DRIVER_A4 = 0x04,    // Motor driver 4
-    DRIVER_A5 = 0x05,    // Motor driver 5
+    DRIVER_A0 = 0x10,    // Motor driver 0
+    DRIVER_A1 = 0x11,    // Motor driver 1
+    DRIVER_A2 = 0x12,    // Motor driver 2
+    DRIVER_A3 = 0x13,    // Motor driver 3
+    DRIVER_A4 = 0x14,    // Motor driver 4
 
-    DRIVER_B1 = 0x06,    // Motor driver 1
-    DRIVER_B2 = 0x07,    // Motor driver 2
-    DRIVER_B3 = 0x08,    // Motor driver 3
-    DRIVER_B4 = 0x09,    // Motor driver 4
-    DRIVER_B5 = 0x0A,    // Motor driver 5
+    DRIVER_B0 = 0x15,    // Motor driver 0
+    DRIVER_B1 = 0x16,    // Motor driver 1
+    DRIVER_B2 = 0x17,    // Motor driver 2
+    DRIVER_B3 = 0x18,    // Motor driver 3
+    DRIVER_B4 = 0x19,    // Motor driver 4
 
-    DRIVER_C1 = 0x0B,    // Motor driver 1
-    DRIVER_C2 = 0x0C,    // Motor driver 2
-    DRIVER_C3 = 0x0D,    // Motor driver 3
-    DRIVER_C4 = 0x0E,    // Motor driver 4
-    DRIVER_C5 = 0x0F,    // Motor driver 5
+    DRIVER_C0 = 0x1A,    // Motor driver 0
+    DRIVER_C1 = 0x1B,    // Motor driver 1
+    DRIVER_C2 = 0x1C,    // Motor driver 2
+    DRIVER_C3 = 0x1D,    // Motor driver 3
+    DRIVER_C4 = 0x1E,    // Motor driver 4
 };
 
 #define CAN_ENABLE_ON 1.0
