@@ -45,18 +45,19 @@ enum class DEVICE_ID {
 
 enum class VARIABLE {
     ENABLE = 0x00,
+    STATUS = 0x01,
     
-    POSITION = 0x01,
-    SPEED = 0x02,
-    TORQUE = 0x03,
-    TORQUE_FF = 0x04,
+    POSITION = 0x10,
+    SPEED = 0x11,
+    TORQUE = 0x12,
+    TORQUE_FF = 0x13,
     
-    MOTION_TYPE = 0x10, // Motion control type (voltage, velocity, angle, ol_velocity, ol_angle)
-    TORQUE_TYPE = 0x11, // Torque control type (voltage, dc_current, foc_current)
+    MOTION_TYPE = 0x16, // Motion control type (voltage, velocity, angle, ol_velocity, ol_angle)
+    TORQUE_TYPE = 0x17, // Torque control type (voltage, dc_current, foc_current)
     
     LIM_C = 0x18,       // Current limit
     LIM_U = 0x19,       // Voltage limit
-    LIM_V = 0x20,       // Speed limit
+    LIM_V = 0x1A,       // Speed limit
     
     // Current D
     PID_CD_P = 0x20,    // Proportional
