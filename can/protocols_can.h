@@ -39,6 +39,10 @@ enum class DEVICE_ID {
     DRIVER_C5 = 0x0F,    // Motor driver 5
 };
 
+#define CAN_ENABLE_ON 1.0
+#define CAN_ENABLE_OFF -1.0
+#define CAN_ENABLE_THRESHOLD 0.5
+
 enum class VARIABLE {
     ENABLE = 0x00,
     
