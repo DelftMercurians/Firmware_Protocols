@@ -95,6 +95,7 @@ enum class VARIABLE {
 };
 
 #define CAN_VARIABLE_TYPE float
+#define CAN_VARIABLE_TYPE_INT uint32_t
 
 enum class ACCESS {
     READ = 0x40,
