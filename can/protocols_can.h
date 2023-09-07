@@ -132,6 +132,10 @@ const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
     {0x320026, DEVICE_ID::DRIVER_3},
 };
 
+struct Value_Return {
+    DEVICE_ID txId;
+    CAN_VARIABLE_TYPE value;
+};
 
 
 #define CAN_MAKE_ID(Device, Message)     (((uint16_t) Device<<8) | (uint16_t) Message) 
