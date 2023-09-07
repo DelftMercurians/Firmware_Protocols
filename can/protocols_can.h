@@ -14,23 +14,19 @@ namespace CAN {
 #define UPPER_LIMIT (1e5)
 #define LOWER_LIMIT (-UPPER_LIMIT)
 
+// This can only be 3 bits
 enum class DEVICE_ID {
-    PRIMARY = 0x0E,     // Main device on bus, coordinates all other devices (high priority messages)
+    PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
 
-    ALL = 0x0F,         // Send message to all devices (highest priority)
-    ANY = 0x00,         // Send message to all devices (lowest priority messages)
+    ALL = 0x7,         // Send message to all devices (highest priority)
+    ANY = 0x0,         // Send message to all devices (lowest priority messages)
 
-    DRIVER_0 = 0x01,    // Motor driver 0 (Wheel motor)
-    DRIVER_1 = 0x02,    // Motor driver 1 (Wheel motor)
-    DRIVER_2 = 0x03,    // Motor driver 2 (wheel motor)
-    DRIVER_3 = 0x04,    // Motor driver 3 (wheel motor)
+    DRIVER_0 = 0x1,    // Motor driver 0 (Wheel motor)
+    DRIVER_1 = 0x2,    // Motor driver 1 (Wheel motor)
+    DRIVER_2 = 0x3,    // Motor driver 2 (wheel motor)
+    DRIVER_3 = 0x4,    // Motor driver 3 (wheel motor)
 
-    DRIVER_A = 0x05,    // Motor driver A (auxiliary motor)
-    DRIVER_B = 0x06,    // Motor driver B
-    DRIVER_C = 0x07,    // Motor driver C
-    DRIVER_D = 0x08,    // Motor driver D
-
-    DEBUG = 0x09,    // Debugger ID
+    DRIVER_A = 0x5,    // Motor driver A (auxiliary motor)
 };
 
 enum class VARIABLE {
