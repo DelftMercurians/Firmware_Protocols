@@ -21,10 +21,10 @@ enum class DEVICE_ID {
     ANY = 0x00,         // Send message to all devices (lowest priority messages)
 
     DRIVER_A0 = 0x10,    // Motor driver 0
-    DRIVER_A1 = 0x11,    // Motor driver 1
-    DRIVER_A2 = 0x12,    // Motor driver 2
-    DRIVER_A3 = 0x13,    // Motor driver 3
-    DRIVER_A4 = 0x14,    // Motor driver 4
+    DRIVER_A1 = 0x01,    // Motor driver 1
+    DRIVER_A2 = 0x02,    // Motor driver 2
+    DRIVER_A3 = 0x03,    // Motor driver 3
+    DRIVER_A4 = 0x04,    // Motor driver 4
 
     DRIVER_B0 = 0x15,    // Motor driver 0
     DRIVER_B1 = 0x16,    // Motor driver 1
@@ -47,6 +47,9 @@ enum class VARIABLE {
     SPEED = 0x11,
     TORQUE = 0x12,
     TORQUE_FF = 0x13,
+    
+    POSITION_MES = 0x14,
+    SPEED_MES = 0x15,
     
     MOTION_TYPE = 0x16, // Motion control type (voltage, velocity, angle, ol_velocity, ol_angle)
     TORQUE_TYPE = 0x17, // Torque control type (voltage, dc_current, foc_current)
