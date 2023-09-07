@@ -15,28 +15,22 @@ namespace CAN {
 #define LOWER_LIMIT (-UPPER_LIMIT)
 
 enum class DEVICE_ID {
-    PRIMARY = 0xF0,     // Main device on bus, coordinates all other devices (high priority messages)
+    PRIMARY = 0x0E,     // Main device on bus, coordinates all other devices (high priority messages)
 
-    ALL = 0xFF,         // Send message to all devices (highest priority)
+    ALL = 0x0F,         // Send message to all devices (highest priority)
     ANY = 0x00,         // Send message to all devices (lowest priority messages)
 
-    DRIVER_A0 = 0x10,    // Motor driver 0
-    DRIVER_A1 = 0x01,    // Motor driver 1
-    DRIVER_A2 = 0x02,    // Motor driver 2
-    DRIVER_A3 = 0x03,    // Motor driver 3
-    DRIVER_A4 = 0x04,    // Motor driver 4
+    DRIVER_0 = 0x01,    // Motor driver 0 (Wheel motor)
+    DRIVER_1 = 0x02,    // Motor driver 1 (Wheel motor)
+    DRIVER_2 = 0x03,    // Motor driver 2 (wheel motor)
+    DRIVER_3 = 0x04,    // Motor driver 3 (wheel motor)
 
-    DRIVER_B0 = 0x15,    // Motor driver 0
-    DRIVER_B1 = 0x16,    // Motor driver 1
-    DRIVER_B2 = 0x17,    // Motor driver 2
-    DRIVER_B3 = 0x18,    // Motor driver 3
-    DRIVER_B4 = 0x19,    // Motor driver 4
+    DRIVER_A = 0x05,    // Motor driver A (auxiliary motor)
+    DRIVER_B = 0x06,    // Motor driver B
+    DRIVER_C = 0x07,    // Motor driver C
+    DRIVER_D = 0x08,    // Motor driver D
 
-    DRIVER_C0 = 0x1A,    // Motor driver 0
-    DRIVER_C1 = 0x1B,    // Motor driver 1
-    DRIVER_C2 = 0x1C,    // Motor driver 2
-    DRIVER_C3 = 0x1D,    // Motor driver 3
-    DRIVER_C4 = 0x1E,    // Motor driver 4
+    DEBUG = 0x09,    // Debugger ID
 };
 
 enum class VARIABLE {
@@ -118,6 +112,12 @@ enum class MESSAGE_ID {
     GET_SPEED = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED, ACCESS::READ),       // Get encoder speed
     GET_TORQUE = CAN_GENERATE_MESSAGE_ID_(VARIABLE::TORQUE, ACCESS::READ),      // Get current torque output
 
+    GET_POSITION_MES = CAN_GENERATE_MESSAGE_ID_(VARIABLE::POSITION_MES, ACCESS::READ),
+    GET_SPEED_MES = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED_MES, ACCESS::READ),
+
+    RETURN_POSITION_MES = CAN_GENERATE_MESSAGE_ID_(VARIABLE::POSITION_MES, ACCESS::MASK),
+    RETURN_SPEED_MES = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED_MES, ACCESS::MASK),
+
     SYNC = 0xF6,            // Synchronise clocks
 
     ESTOP = 0xFF,           // Emergency stop all drivers (highest priority)
@@ -125,15 +125,15 @@ enum class MESSAGE_ID {
 };
 
 const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
-    {0x200034, DEVICE_ID::DRIVER_A1},
-    {0x230034, DEVICE_ID::DRIVER_A2},
-    {0x370033, DEVICE_ID::DRIVER_A3},
-    {0x220027, DEVICE_ID::DRIVER_A4},
+    {0x200034, DEVICE_ID::DRIVER_0},
+    {0x230034, DEVICE_ID::DRIVER_1},
+    {0x370033, DEVICE_ID::DRIVER_2},
+    {0x220027, DEVICE_ID::DRIVER_3},
 
-    {0x640046, DEVICE_ID::DRIVER_A1},
-    {0x5C004D, DEVICE_ID::DRIVER_A2},
-    {0x560044, DEVICE_ID::DRIVER_A3},
-    {0x320026, DEVICE_ID::DRIVER_A4},
+    {0x5C004D, DEVICE_ID::DRIVER_0},
+    {0x640046, DEVICE_ID::DRIVER_1},
+    {0x560044, DEVICE_ID::DRIVER_2},
+    {0x320026, DEVICE_ID::DRIVER_3},
 };
 
 
