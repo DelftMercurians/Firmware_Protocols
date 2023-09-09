@@ -1,26 +1,19 @@
 #include "radio.h"
 
 // Initialise Radio
-void CustomRF24::init(uint64_t address, rf24_pa_dbm_e pa_level, bool idleRx) {
-    this->idleRx = idleRx;
+void CustomRF24::init(Address address_r, Address address_w, uint8_t pipe, rf24_pa_dbm_e pa_level) {
 	this->begin();
-	this->openReadingPipe(1, address);   //Setting the address at which we will receive the data
-	this->openWritingPipe(address+1);
+	this->openReadingPipe(pipe, (uint64_t) address_r);   //Setting the address at which we will receive the data
+	this->openWritingPipe((uint64_t) address_w);
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
-	if(idleRx){
-        this->startListening();              //This sets the module as receiver
-    }
+    this->startListening();           // Always idle in receiving mode
 }
 
 // Send a generic message
 void CustomRF24::sendMessage(Message msg) {
-    if(idleRx) {
-        this->stopListening();
-        this->write(&msg, sizeof(msg));
-        this->startListening();
-    } else {
-        this->write(&msg, sizeof(msg));
-    }
+    this->stopListening();
+    this->write(&msg, sizeof(msg));
+    this->startListening();
 }
 
 // Have a sendMessage() command for every message type
@@ -45,11 +38,5 @@ void CustomRF24::sendMessage(Reply reply) {
 
 // Receive a generic message
 void CustomRF24::receiveMessage(Message &msg) {
-    if(!idleRx) {
-        this->startListening();
-        this->read(&msg, sizeof(msg));
-        this->stopListening();
-    } else {
-        this->read(&msg, sizeof(msg));
-    }
+    this->read(&msg, sizeof(msg));
 }

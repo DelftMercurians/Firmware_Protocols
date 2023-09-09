@@ -10,7 +10,7 @@ class CustomRF24 : public RF24 {
     public:
         CustomRF24() : RF24(PB0, PA4) {}
 
-        void init(uint64_t address, rf24_pa_dbm_e pa_level = RF24_PA_MIN, bool idleRx = true) ;
+        void init(Address address_r, Address address_w, uint8_t pipe = 1, rf24_pa_dbm_e pa_level = RF24_PA_MIN) ;
 
         void sendMessage(Message msg);
         void sendMessage(ConfigMessage configMsg);
@@ -18,6 +18,4 @@ class CustomRF24 : public RF24 {
         void sendMessage(Reply reply);
 
         void receiveMessage(Message &msg);
-    private:
-        bool idleRx;
 };

@@ -9,6 +9,11 @@
 
 namespace Radio {
 
+enum class Address : uint64_t {
+    PRIMARY = 0xF0F0F0F0E1LL,
+    RECEIVER = 0xF0F0F0F0E2LL
+};
+
 /* CONFIG MESSAGES */
 // Configuration Message Types
 enum class ConfigMessageType {
@@ -47,6 +52,7 @@ struct Reply {
 
 // A list of all possible message types transmitted over radio
 enum class MessageType : uint8_t {
+    None,
     Command,
     Reply,
     ConfigMessage,
