@@ -9,10 +9,16 @@
 
 namespace Radio {
 
-enum class Address : uint64_t {
-    PRIMARY = 0xF0F0F0F0E1LL,
-    RECEIVER = 0xF0F0F0F0E2LL
+enum class Device {
+    Primary = 0,
+    Robot_0 = 1,
+    Robot_1 = 2,
+    Robot_2 = 3,
+    Robot_3 = 4,
+    Robot_4 = 5,
 };
+
+const uint64_t DefaultAddress = 0xF0F0F0F0E0LL;
 
 /* CONFIG MESSAGES */
 // Configuration Message Types
@@ -46,7 +52,6 @@ struct Reply {
     HG::Status status;          // Robot MCU status
     HG::Status md_status[4];    // Motor driver MCU statuses
     HG::Pose speed;             // Measured speed
-    HG::Pose position;          // Measured position
 };
 
 
