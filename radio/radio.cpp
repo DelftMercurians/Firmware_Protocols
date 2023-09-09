@@ -1,7 +1,7 @@
 #include "radio.h"
 
 // Initialise Radio
-void CustomRF24::init(uint64_t address, rf24_pa_dbm_e pa_level = RF24_PA_MIN, bool idleRx = true) {
+void CustomRF24::init(uint64_t address, rf24_pa_dbm_e pa_level, bool idleRx) {
     this->idleRx = idleRx;
 	this->begin();
 	this->openReadingPipe(1, address);   //Setting the address at which we will receive the data
