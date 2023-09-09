@@ -9,24 +9,6 @@
 
 namespace Radio {
 
-// A list of all possible message types transmitted over radio
-enum class MessageType : uint8_t {
-    Command,
-    Reply,
-    ConfigMessage,
-};
-
-// A structure that can hold messages of any type
-struct Message {
-    MessageType mt;
-    union {
-        Command c;
-        Reply r;
-        ConfigMessage cm;
-    } msg;
-};
-
-
 /* CONFIG MESSAGES */
 // Configuration Message Types
 enum class ConfigMessageType {
@@ -61,5 +43,24 @@ struct Reply {
     HG::Pose speed;             // Measured speed
     HG::Pose position;          // Measured position
 };
+
+
+// A list of all possible message types transmitted over radio
+enum class MessageType : uint8_t {
+    Command,
+    Reply,
+    ConfigMessage,
+};
+
+// A structure that can hold messages of any type
+struct Message {
+    MessageType mt;
+    union {
+        Command c;
+        Reply r;
+        ConfigMessage cm;
+    } msg;
+};
+
 
 }
