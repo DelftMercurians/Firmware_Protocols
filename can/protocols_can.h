@@ -15,6 +15,7 @@ namespace CAN {
 #define LOWER_LIMIT (-UPPER_LIMIT)
 
 // This can only be 3 bits
+#define CAN_NUM_DEVICE_IDS (1 << 3)
 enum class DEVICE_ID {
     PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
 
