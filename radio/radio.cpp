@@ -1,10 +1,10 @@
 #include "radio.h"
 
 // Initialise Radio
-void CustomRF24::init(Radio::Device device, rf24_pa_dbm_e pa_level = RF24_PA_MIN)  {
+void CustomRF24::init(Radio::Device device, rf24_pa_dbm_e pa_level)  {
 	this->begin();
     this->setPayloadSize(sizeof(Radio::Message));
-    if(device == Radio::Device::Primary) {
+    if(device == Radio::Device::BaseStation) {
         this->openWritingPipe(Radio::DefaultAddress);
         // Open all five reading pipes (one for each robot)
         for(uint8_t pipe = 1; pipe < 6; pipe++){

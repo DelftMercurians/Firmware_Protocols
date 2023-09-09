@@ -10,7 +10,7 @@
 namespace Radio {
 
 enum class Device {
-    Primary = 0,
+    BaseStation = 0,
     Robot_0 = 1,
     Robot_1 = 2,
     Robot_2 = 3,
