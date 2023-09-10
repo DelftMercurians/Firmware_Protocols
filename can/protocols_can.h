@@ -33,6 +33,8 @@ enum class DEVICE_ID {
 enum class VARIABLE {
     ENABLE = 0x00,
     STATUS = 0x01,
+
+    COMMAND = 0x0A,
     
     POSITION = 0x10,
     SPEED = 0x11,
@@ -86,6 +88,12 @@ enum class VARIABLE {
 
 #define CAN_VARIABLE_TYPE float
 #define CAN_VARIABLE_TYPE_INT uint32_t
+
+struct COMMAND {
+    int16_t speeds[4];
+};
+
+#define CAN_MAX_SPEED (200.0)
 
 enum class ACCESS {
     READ = 0x40,
