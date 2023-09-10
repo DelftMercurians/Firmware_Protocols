@@ -173,7 +173,7 @@ void SerialInterface::run() {
 
 
 bool SerialInterface::isTerminator(char c) {
-    return (c == 0) || (c == '\n') || (c == '\r');
+    return (c == 0) || (c == '\n') || (c == '\r') || (c == ';');
 }
 
 void SerialInterface::echo(char* c) {
