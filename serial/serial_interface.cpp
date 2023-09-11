@@ -119,10 +119,7 @@ void SerialInterface::printHelp(String indentation) {
 
 
 void SerialInterface::run(char* c) {
-    if(isTerminator(c[0])){
-        Serial.println("No (sub)command received.");
-        return;
-    };
+    if(isTerminator(c[0])) return;
 
     auto item = fun_map.find(c[0]);
     if(item == fun_map.end()) {
