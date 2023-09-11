@@ -17,5 +17,5 @@ class CustomRF24 : public RF24 {
         void sendMessage(Radio::Command command);
         void sendMessage(Radio::Reply reply);
 
-        void receiveMessage(Radio::Message msg);
+        void receiveMessage(Radio::Message& msg);
 };

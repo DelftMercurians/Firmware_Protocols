@@ -20,6 +20,11 @@ void CustomRF24::init(Radio::Device device, rf24_pa_dbm_e pa_level)  {
 
 // Send a generic message
 void CustomRF24::sendMessage(Radio::Message msg) {
+    Serial.print("MSG = ");
+    for(uint8_t i = 0; i < sizeof(msg); i++) {
+        Serial.printf("%02X ", ((uint8_t*) &msg)[i]);
+    }
+    Serial.println();
     this->stopListening();
     this->write(&msg, sizeof(msg));
     this->startListening();
@@ -46,6 +51,6 @@ void CustomRF24::sendMessage(Radio::Reply reply) {
 }
 
 // Receive a generic message
-void CustomRF24::receiveMessage(Radio::Message msg) {
+void CustomRF24::receiveMessage(Radio::Message& msg) {
     this->read(&msg, sizeof(msg));
 }
