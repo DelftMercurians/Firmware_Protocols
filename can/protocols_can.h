@@ -3,18 +3,38 @@
 // 2023-06-05
 // thomas.hettasch@gmail.com
 
+// Maximum ID length: 11 bits
+// Maximum message length: 8 bytes
+
+// ID Structure (11 bits):
+// Top 3 bits: DEVICE_ID
+// Bottom 8 bits (2 options):
+//  8 bits for general commands (0x00 -> 0x3F)
+// OR
+//  2 bits for ACCESS type
+//  6 bits for VARIABLE id
+
 #pragma once
 #include <map>
+#include "../utils.h"
 
 namespace CAN {
 
+// Make message IDs from variable and access type
 #define CAN_GENERATE_MESSAGE_ID_(variable, access) ((uint32_t) variable | (uint32_t) access)
 #define CAN_GENERATE_MESSAGE_ID(variable, access) (CAN::MESSAGE_ID) (CAN_GENERATE_MESSAGE_ID_(variable, access))
+
+// Make full ID from destination device and message type
+#define CAN_MAKE_ID(Device, Message)     (((uint16_t) Device<<8) | (uint16_t) Message)
+
+// Extract message and device ids from full ID
+#define CAN_MAKE_MESSAGE_ID(CanID)            (CAN::MESSAGE_ID) (CanID & 0xff)
+#define CAN_GET_DEVICE_ID(CanID)             (CAN::DEVICE_ID) (CanID>>8)
 
 #define UPPER_LIMIT (1e5)
 #define LOWER_LIMIT (-UPPER_LIMIT)
 
-// This can only be 3 bits
+// Various device IDs (0x00 -> 0x07, 3 bits)
 #define CAN_NUM_DEVICE_IDS (1 << 3)
 enum class DEVICE_ID {
     PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
@@ -30,6 +50,7 @@ enum class DEVICE_ID {
     DRIVER_A = 0x5,    // Motor driver A (auxiliary motor)
 };
 
+// Various accessible variables (0x00 -> 0x3F, 6 bits)
 enum class VARIABLE {
     ENABLE = 0x00,
     STATUS = 0x01,
@@ -89,25 +110,57 @@ enum class VARIABLE {
 #define CAN_VARIABLE_TYPE float
 #define CAN_VARIABLE_TYPE_INT uint32_t
 
+
+// Wheel speed command message
+#define CAN_SCALE_SPEED (400.0/INT16_MAX)
 struct COMMAND {
     int16_t speeds[4];
 };
+// *******
 
-#define CAN_MAX_SPEED (200.0)
+// Motor Status message
+#define CAN_SCALE_TEMP (200.0/INT16_MAX)
+#define CAN_SCALE_BATV (50.0/INT16_MAX)
+struct MotorStatus {
+    HG::Status status;
+    int16_t temp;
+    int16_t battV;
+};
+// *******
 
+// Motor encoder message
+struct EncoderFeedback {
+    uint32_t time;
+    float position;
+};
+// *******
+
+
+// Type of variable access
 enum class ACCESS {
     READ = 0x40,
     WRITE = 0x80,
     MASK = 0xC0,
 };
 
+
+// Combines all message types in one. Some options are not explicitly named here (0x00 -> 0xFF, 8 bits)
+// 0x00 -> 0x3F are general commands
+// 0x40 -> 0x7F are variable read requests
+// 0x80 -> 0xBF are variable write requests
+// 0xC0 -> 0xFF are variable return answers
 enum class MESSAGE_ID {
     ANNOUNCE = 0x00,        // Use for announcing presence on bus
     REQ_ANNOUNCE = 0x01,    // Use for requesting announcing presence on bus
 
     ACK = 0x05,             // Acknowledge messages
 
-    LED_SET_DUTY = 0x11,    // Set led blink duty cycle
+    LED_SET_DUTY = 0x11,    // Set led blink duty cycle ** defunct, might remove
+
+    SYNC = 0x36,            // Synchronise clocks
+
+    ESTOP = 0x3F,           // Emergency stop all drivers (highest priority) ** Priorities have changed
+    STOP = 0x30,            // Gracefull stop all drivers (high priority) ** Priorities have changed
 
     SET_POSITION = CAN_GENERATE_MESSAGE_ID_(VARIABLE::POSITION, ACCESS::WRITE),    // Set a motor driver's position setpoint
     SET_SPEED = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED, ACCESS::WRITE),       // Set a motor driver's speed setpoint
@@ -123,12 +176,11 @@ enum class MESSAGE_ID {
     RETURN_POSITION_MES = CAN_GENERATE_MESSAGE_ID_(VARIABLE::POSITION_MES, ACCESS::MASK),
     RETURN_SPEED_MES = CAN_GENERATE_MESSAGE_ID_(VARIABLE::SPEED_MES, ACCESS::MASK),
 
-    SYNC = 0xF6,            // Synchronise clocks
-
-    ESTOP = 0xFF,           // Emergency stop all drivers (highest priority)
-    STOP = 0xF0,            // Gracefull stop all drivers (high priority)
+    
 };
 
+// Maps actual hardware UIDs to device ID
+// Mapping may be done in other ways later
 const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
     {0x200034, DEVICE_ID::DRIVER_0},
     {0x230034, DEVICE_ID::DRIVER_1},
@@ -141,14 +193,11 @@ const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
     {0x320026, DEVICE_ID::DRIVER_3},
 };
 
+// Used to send variables back to answer a request
 struct Value_Return {
-    DEVICE_ID txId;
-    CAN_VARIABLE_TYPE value;
+    DEVICE_ID txId;             // transmitting device
+    CAN_VARIABLE_TYPE value;    // value
 };
 
-
-#define CAN_MAKE_ID(Device, Message)     (((uint16_t) Device<<8) | (uint16_t) Message) 
-#define CAN_MAKE_MESSAGE_ID(CanID)            (CAN::MESSAGE_ID) (CanID & 0xff)
-#define CAN_GET_DEVICE_ID(CanID)             (CAN::DEVICE_ID) (CanID>>8)
 
 }

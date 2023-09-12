@@ -7,8 +7,16 @@
 #include "../utils.h"
 #include "../can/protocols_can.h"
 
+#define BASESTATION Radio::Device::BaseStation
+#define ROBOT_0 Radio::Device::Robot_0
+#define ROBOT_1 Radio::Device::Robot_0
+#define ROBOT_2 Radio::Device::Robot_0
+#define ROBOT_3 Radio::Device::Robot_0
+#define ROBOT_4 Radio::Device::Robot_0
+
 namespace Radio {
 
+// Due to limitations of the radio, there can only be 5 robots for now
 enum class Device {
     BaseStation = 0,
     Robot_0 = 1,
@@ -46,6 +54,7 @@ struct Command {
     HG::Pose speed;     // Desired robot speed
 };
 
+
 /* REPLY MESSAGES */
 // Reply from robot to mothership
 struct Reply {
@@ -57,20 +66,20 @@ struct Reply {
 
 // A list of all possible message types transmitted over radio
 enum class MessageType : uint8_t {
-    None,
-    Command,
-    Reply,
-    ConfigMessage,
+    None,               // No message received
+    Command,            // A command message
+    Reply,              // A reply from the robot
+    ConfigMessage,      // A configuration message
 };
 
 // A structure that can hold messages of any type
 struct Message {
-    MessageType mt;
+    MessageType mt;             // The message type
     union {
         Command c;
         Reply r;
         ConfigMessage cm;
-    } msg;
+    } msg;                      // The message contents
 };
 
 
