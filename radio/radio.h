@@ -12,10 +12,10 @@ class CustomRF24 : public RF24 {
         void init(  Radio::Device device,
                     rf24_pa_dbm_e pa_level = RF24_PA_MIN) ;
 
-        void registerCallback(void (*)(Radio::ConfigMessage));
-        void registerCallback(void (*)(Radio::Command));
-        void registerCallback(void (*)(Radio::Reply));
-        void registerCallback(void (*)(Radio::Status));
+        void registerCallback(void (*)(Radio::ConfigMessage, uint8_t));
+        void registerCallback(void (*)(Radio::Command, uint8_t));
+        void registerCallback(void (*)(Radio::Reply, uint8_t));
+        void registerCallback(void (*)(Radio::Status, uint8_t));
 
         void sendMessage(Radio::Message msg);
         void sendMessage(Radio::ConfigMessage configMsg);
@@ -28,8 +28,8 @@ class CustomRF24 : public RF24 {
         void run();
 
     private:
-        void (*callback_confmsg)(Radio::ConfigMessage) = nullptr;
-        void (*callback_command)(Radio::Command) = nullptr;
-        void (*callback_reply)(Radio::Reply) = nullptr;
-        void (*callback_status)(Radio::Status) = nullptr;
+        void (*callback_confmsg)(Radio::ConfigMessage, uint8_t) = nullptr;
+        void (*callback_command)(Radio::Command, uint8_t) = nullptr;
+        void (*callback_reply)(Radio::Reply, uint8_t) = nullptr;
+        void (*callback_status)(Radio::Status, uint8_t) = nullptr;
 };

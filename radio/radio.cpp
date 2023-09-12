@@ -62,41 +62,51 @@ void CustomRF24::receiveMessage(Radio::Message& msg) {
     this->read(&msg, sizeof(msg));
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::ConfigMessage)) {
+void CustomRF24::registerCallback(void (*fun)(Radio::ConfigMessage, uint8_t)) {
     callback_confmsg = fun;
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::Command)) {
+void CustomRF24::registerCallback(void (*fun)(Radio::Command, uint8_t)) {
     callback_command = fun;
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::Reply)) {
+void CustomRF24::registerCallback(void (*fun)(Radio::Reply, uint8_t)) {
     callback_reply = fun;
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::Status)) {
+void CustomRF24::registerCallback(void (*fun)(Radio::Status, uint8_t)) {
     callback_status = fun;
 }
 
 
 void CustomRF24::run() {
+    uint8_t pipe = 0;
+    if(!this->available(&pipe)){
+        // No message received
+        return;
+    }
     Radio::Message msg;
     msg.mt = Radio::MessageType::None;
     receiveMessage(msg);
     switch(msg.mt) {
         case Radio::MessageType::ConfigMessage:
             if(callback_confmsg != nullptr){
-                callback_confmsg(msg.msg.cm);
+                callback_confmsg(msg.msg.cm, pipe);
             }
             return;
         case Radio::MessageType::Command:
             if(callback_command != nullptr){
-                callback_command(msg.msg.c);
+                callback_command(msg.msg.c, pipe);
             }
             return;
         case Radio::MessageType::Reply:
             if(callback_reply != nullptr){
-                callback_reply(msg.msg.r);
+                callback_reply(msg.msg.r, pipe);
+            }
+            return;
+        case Radio::MessageType::Status:
+            if(callback_status != nullptr){
+                callback_status(msg.msg.s, pipe);
             }
             return;
         case Radio::MessageType::None:
