@@ -11,6 +11,8 @@ class SerialInterface {
         void add(char command, void (*function) (char*), String help = "");
         void add(char command, void (*function) (float), String help = "");
         void add(char command, void (*function) (int), String help = "");
+        void add(char command, float*, String help = "");
+        void add(char command, int*, String help = "");
         // void add(char command, void (*function) (float*, size_t), String help = "");
 
         void add(char command, void (SerialInterface::*) (char*), SerialInterface*, String help = "");
@@ -26,6 +28,8 @@ class SerialInterface {
         void readFloatAndRun(char* c, void (*function) (float));
         // void readFloatsAndRun(char* c, void (*function) (float*, size_t));
         void readIntAndRun(char* c, void (*function) (int));
+        void setFloat(char* c, float* f);
+        void setInt(char* c, int* i);
     private:
         Stream* s;
 
@@ -43,6 +47,8 @@ class SerialInterface {
             Member_CharPointer,
             Float,
             Int,
+            SetFloat,
+            SetInt,
             // FloatPointer,
         };
 
@@ -53,6 +59,8 @@ class SerialInterface {
                 void (SerialInterface::*fun_member_charptr) (char*);
                 void (*fun_float) (float);
                 void (*fun_int) (int);
+                float* ref_float;
+                int* ref_int;
                 // void (*fun_floatptr) (float*, size_t);
             };
             String help;
