@@ -63,6 +63,13 @@ struct Reply {
     HG::Pose speed;             // Measured speed
 };
 
+/* STATUS MESSAGES */
+// Repeated status heartbeat from robot
+struct Status {
+    HG::Status primary_status;
+    CAN::MotorStatus motor_status[4];
+};
+
 
 // A list of all possible message types transmitted over radio
 enum class MessageType : uint8_t {
@@ -70,6 +77,7 @@ enum class MessageType : uint8_t {
     Command,            // A command message
     Reply,              // A reply from the robot
     ConfigMessage,      // A configuration message
+    Status,             // A hearbeat status message
 };
 
 // A structure that can hold messages of any type
@@ -79,6 +87,7 @@ struct Message {
         Command c;
         Reply r;
         ConfigMessage cm;
+        Status s;
     } msg;                      // The message contents
 };
 

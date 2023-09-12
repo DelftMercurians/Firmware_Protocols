@@ -49,8 +49,62 @@ void CustomRF24::sendMessage(Radio::Reply reply) {
     msg.msg.r = reply; 
     this->sendMessage(msg);
 }
+void CustomRF24::sendMessage(Radio::Status status) {
+    Radio::Message msg;
+    msg.mt = Radio::MessageType::Status;
+    msg.msg.s = status; 
+    this->sendMessage(msg);
+}
+
 
 // Receive a generic message
 void CustomRF24::receiveMessage(Radio::Message& msg) {
     this->read(&msg, sizeof(msg));
+}
+
+void CustomRF24::registerCallback(void (*fun)(Radio::ConfigMessage)) {
+    callback_confmsg = fun;
+}
+
+void CustomRF24::registerCallback(void (*fun)(Radio::Command)) {
+    callback_command = fun;
+}
+
+void CustomRF24::registerCallback(void (*fun)(Radio::Reply)) {
+    callback_reply = fun;
+}
+
+void CustomRF24::registerCallback(void (*fun)(Radio::Status)) {
+    callback_status = fun;
+}
+
+
+void CustomRF24::run() {
+    Radio::Message msg;
+    msg.mt = Radio::MessageType::None;
+    receiveMessage(msg);
+    switch(msg.mt) {
+        case Radio::MessageType::ConfigMessage:
+            if(callback_confmsg != nullptr){
+                callback_confmsg(msg.msg.cm);
+            }
+            return;
+        case Radio::MessageType::Command:
+            if(callback_command != nullptr){
+                callback_command(msg.msg.c);
+            }
+            return;
+        case Radio::MessageType::Reply:
+            if(callback_reply != nullptr){
+                callback_reply(msg.msg.r);
+            }
+            return;
+        case Radio::MessageType::None:
+            // No message received
+            break;
+        default:
+            //Unknown message type
+            Serial.println("Unknown message type received!");
+            return;
+    }
 }
