@@ -19,7 +19,8 @@ void CustomRF24::init(Radio::Device device, rf24_pa_dbm_e pa_level)  {
 }
 
 // Send a generic message
-void CustomRF24::sendMessage(Radio::Message msg) {
+template<typename T = Radio::Message>
+void CustomRF24::sendMessage(T msg) {
     // Serial.print("MSG = ");
     // for(uint8_t i = 0; i < sizeof(msg); i++) {
     //     Serial.printf("%02X ", ((uint8_t*) &msg)[i]);
@@ -31,28 +32,32 @@ void CustomRF24::sendMessage(Radio::Message msg) {
 }
 
 // Have a sendMessage() command for every message type
-void CustomRF24::sendMessage(Radio::ConfigMessage configMsg) {
+template<>
+void CustomRF24::sendMessage<Radio::ConfigMessage>(Radio::ConfigMessage msgi) {
     Radio::Message msg;
     msg.mt = Radio::MessageType::ConfigMessage;
-    msg.msg.cm = configMsg;
+    msg.msg.cm = msgi;
     this->sendMessage(msg);
 }
-void CustomRF24::sendMessage(Radio::Command command) {
+template<>
+void CustomRF24::sendMessage<Radio::Command>(Radio::Command msgi) {
     Radio::Message msg;
     msg.mt = Radio::MessageType::Command;
-    msg.msg.c = command; 
+    msg.msg.c = msgi; 
     this->sendMessage(msg);
 }
-void CustomRF24::sendMessage(Radio::Reply reply) {
+template<>
+void CustomRF24::sendMessage<Radio::Reply>(Radio::Reply msgi) {
     Radio::Message msg;
     msg.mt = Radio::MessageType::Reply;
-    msg.msg.r = reply; 
+    msg.msg.r = msgi; 
     this->sendMessage(msg);
 }
-void CustomRF24::sendMessage(Radio::Status status) {
+template<>
+void CustomRF24::sendMessage<Radio::Status>(Radio::Status msgi) {
     Radio::Message msg;
     msg.mt = Radio::MessageType::Status;
-    msg.msg.s = status; 
+    msg.msg.s = msgi; 
     this->sendMessage(msg);
 }
 
@@ -62,19 +67,23 @@ void CustomRF24::receiveMessage(Radio::Message& msg) {
     this->read(&msg, sizeof(msg));
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::ConfigMessage, uint8_t)) {
+template<>
+void CustomRF24::registerCallback<Radio::ConfigMessage>(void (*fun)(Radio::ConfigMessage, uint8_t)) {
     callback_confmsg = fun;
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::Command, uint8_t)) {
+template<>
+void CustomRF24::registerCallback<Radio::Command>(void (*fun)(Radio::Command, uint8_t)) {
     callback_command = fun;
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::Reply, uint8_t)) {
+template<>
+void CustomRF24::registerCallback<Radio::Reply>(void (*fun)(Radio::Reply, uint8_t)) {
     callback_reply = fun;
 }
 
-void CustomRF24::registerCallback(void (*fun)(Radio::Status, uint8_t)) {
+template<>
+void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, uint8_t)) {
     callback_status = fun;
 }
 

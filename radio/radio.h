@@ -12,16 +12,11 @@ class CustomRF24 : public RF24 {
         void init(  Radio::Device device,
                     rf24_pa_dbm_e pa_level = RF24_PA_MIN) ;
 
-        void registerCallback(void (*)(Radio::ConfigMessage, uint8_t));
-        void registerCallback(void (*)(Radio::Command, uint8_t));
-        void registerCallback(void (*)(Radio::Reply, uint8_t));
-        void registerCallback(void (*)(Radio::Status, uint8_t));
+        template<typename T>
+        void registerCallback(void (*fun)(T, uint8_t));
 
-        void sendMessage(Radio::Message msg);
-        void sendMessage(Radio::ConfigMessage configMsg);
-        void sendMessage(Radio::Command command);
-        void sendMessage(Radio::Reply reply);
-        void sendMessage(Radio::Status status);
+        template<typename T>
+        void sendMessage(T msg);
 
         void receiveMessage(Radio::Message& msg);
 
