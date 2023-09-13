@@ -88,11 +88,11 @@ void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, uint
 }
 
 
-void CustomRF24::run() {
+bool CustomRF24::run() {
     uint8_t pipe = 0;
     if(!this->available(&pipe)){
         // No message received
-        return;
+        return false;
     }
     Radio::Message msg;
     msg.mt = Radio::MessageType::None;
@@ -102,28 +102,29 @@ void CustomRF24::run() {
             if(callback_confmsg != nullptr){
                 callback_confmsg(msg.msg.cm, pipe);
             }
-            return;
+            return true;
         case Radio::MessageType::Command:
             if(callback_command != nullptr){
                 callback_command(msg.msg.c, pipe);
             }
-            return;
+            return true;
         case Radio::MessageType::Reply:
             if(callback_reply != nullptr){
                 callback_reply(msg.msg.r, pipe);
             }
-            return;
+            return true;
         case Radio::MessageType::Status:
             if(callback_status != nullptr){
                 callback_status(msg.msg.s, pipe);
             }
-            return;
+            return true;
         case Radio::MessageType::None:
             // No message received
             break;
         default:
             //Unknown message type
             // Serial.println(" Unknown message type received!");
-            return;
+            return false;
     }
+    return false;
 }

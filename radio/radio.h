@@ -20,7 +20,7 @@ class CustomRF24 : public RF24 {
 
         void receiveMessage(Radio::Message& msg);
 
-        void run();
+        bool run();
 
     private:
         void (*callback_confmsg)(Radio::ConfigMessage, uint8_t) = nullptr;
