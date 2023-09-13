@@ -126,6 +126,10 @@ struct MotorStatus {
     int16_t temp;
     int16_t battV;
 };
+struct MotorStatusMessage {
+    DEVICE_ID txId;    // transmitting device
+    MotorStatus ms;    // value
+};
 // *******
 
 // Motor encoder message
