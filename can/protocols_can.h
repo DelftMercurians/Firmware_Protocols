@@ -36,7 +36,7 @@ namespace CAN {
 
 // Various device IDs (0x00 -> 0x07, 3 bits)
 #define CAN_NUM_DEVICE_IDS (1 << 3)
-enum class DEVICE_ID {
+enum class DEVICE_ID : uint8_t {
     PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
 
     ALL = 0x7,         // Send message to all devices (highest priority)
