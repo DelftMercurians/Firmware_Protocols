@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 #include <Arduino.h>
+#include "version.h"
+#include "libversion.h"
 
 class SerialInterface {
     public:
@@ -69,6 +71,9 @@ class SerialInterface {
         };
 
         std::map<char, Function> fun_map;
+
+        static void printVersion(char* c);
+        static void printProtocolVersion(char* c);
 
 
 

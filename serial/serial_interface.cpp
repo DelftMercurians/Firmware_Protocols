@@ -8,6 +8,12 @@ SerialInterface::SerialInterface(Stream* s, char name) {
 void SerialInterface::initFuns() {
     this->add('?', &SerialInterface::printHelp, this, "Print commands");
     this->add('e', SerialInterface::echo, "Echo");
+    #ifdef VERSION_SHORT
+    this->add('v', SerialInterface::printVersion, "Version");
+    #endif
+    #ifdef PROTOCOL_VERSION
+    this->add('#', SerialInterface::printProtocolVersion, "Protocol version");
+    #endif
 }
 
 void SerialInterface::add(char command, void (*function) (char*), String help) {
@@ -210,3 +216,19 @@ void SerialInterface::echo(char* c) {
 	}
 	Serial.println();
 }
+
+
+void SerialInterface::printVersion(char* c) {
+    #ifdef VERSION_SHORT
+    Serial.print(VERSION_SHORT);
+    Serial.print('\n');
+    #endif
+}
+
+void SerialInterface::printProtocolVersion(char* c) {
+    #ifdef PROTOCOL_VERSION
+    Serial.print(PROTOCOL_VERSION);
+    Serial.print('\n');
+    #endif
+}
+

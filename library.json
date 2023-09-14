@@ -3,5 +3,8 @@
     {
         "name": "Thomas Hettasch",
         "email": "thomas.hettasch@gmail.com"
+    },
+    "build": {
+        "includeDir": "../../include"
     }
 }
