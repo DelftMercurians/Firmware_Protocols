@@ -56,6 +56,7 @@ enum class VARIABLE {
     STATUS = 0x01,
 
     COMMAND = 0x0A,
+    ENCODER = 0x0B,
     
     POSITION = 0x10,
     SPEED = 0x11,
@@ -133,9 +134,10 @@ struct MotorStatusMessage {
 // *******
 
 // Motor encoder message
+// Blatantly ignore that Heisenberg guy
 struct EncoderFeedback {
-    uint32_t time;
     float position;
+    float speed;
 };
 // *******
 
