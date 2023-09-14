@@ -1,8 +1,13 @@
 #pragma once
 #include <map>
 #include <Arduino.h>
-#include "version.h"
-#include "libversion.h"
+#if __has_include("version.h")
+    #include "version.h"
+#endif
+#if __has_include("../libversion.h")
+    #include "../libversion.h"
+#endif
+
 
 class SerialInterface {
     public:
