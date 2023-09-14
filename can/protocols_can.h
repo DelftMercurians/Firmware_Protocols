@@ -134,10 +134,9 @@ struct MotorStatusMessage {
 // *******
 
 // Motor encoder message
-// Blatantly ignore that Heisenberg guy
 struct EncoderFeedback {
-    float position;
-    float speed;
+    DEVICE_ID txId;     // transmitting device
+    float speed;        // encoder measured speed
 };
 // *******
 
