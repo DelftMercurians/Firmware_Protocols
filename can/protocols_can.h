@@ -195,7 +195,8 @@ const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
     {0x220027, DEVICE_ID::DRIVER_3},
 
     {0x5C004D, DEVICE_ID::DRIVER_0},
-    {0x640046, DEVICE_ID::DRIVER_1},
+    {0x640046, DEVICE_ID::DRIVER_1},    // blown up CAN tranceiver
+    {0x560062, DEVICE_ID::DRIVER_1},    // replacement board
     {0x560044, DEVICE_ID::DRIVER_2},
     {0x320026, DEVICE_ID::DRIVER_3},
 };
