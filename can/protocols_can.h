@@ -117,6 +117,7 @@ enum class VARIABLE {
 struct COMMAND {
     int16_t speeds[4];
 };
+static_assert(sizeof(COMMAND) <= 8, "COMMAND exceeds maximum size");
 // *******
 
 // Motor Status message
@@ -131,6 +132,7 @@ struct MotorStatusMessage {
     DEVICE_ID txId;    // transmitting device
     MotorStatus ms;    // value
 };
+static_assert(sizeof(MotorStatusMessage) <= 8, "MotorStatusMessage exceeds maximum size");
 // *******
 
 // Motor encoder message
@@ -138,6 +140,7 @@ struct EncoderFeedback {
     DEVICE_ID txId;     // transmitting device
     float speed;        // encoder measured speed
 };
+static_assert(sizeof(EncoderFeedback) <= 8, "EncoderFeedback exceeds maximum size");
 // *******
 
 
@@ -207,5 +210,6 @@ struct Value_Return {
     CAN_VARIABLE_TYPE value;    // value
 };
 
+static_assert(sizeof(Value_Return) <= 8, "Value_Return exceeds maximum size");
 
 }

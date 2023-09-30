@@ -91,5 +91,6 @@ struct Message {
     } msg;                      // The message contents
 };
 
+static_assert(sizeof(Message) <= 32, "Message exceeds maximum size");
 
 }
