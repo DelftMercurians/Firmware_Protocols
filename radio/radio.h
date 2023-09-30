@@ -22,9 +22,30 @@ class CustomRF24 : public RF24 {
 
         bool run();
 
-    private:
+    protected:
+        Radio::Device identity;
+
+        void preInit(Radio::Device device, rf24_pa_dbm_e pa_level);
+        void postInit();
+
         void (*callback_confmsg)(Radio::ConfigMessage, uint8_t) = nullptr;
         void (*callback_command)(Radio::Command, uint8_t) = nullptr;
         void (*callback_reply)(Radio::Reply, uint8_t) = nullptr;
         void (*callback_status)(Radio::Status, uint8_t) = nullptr;
+};
+
+class CustomRF24_Robot : public CustomRF24 {
+    public:
+        void init(Radio::Device device, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
+};
+
+class CustomRF24_Base : public CustomRF24 {
+    public:
+        void init(rf24_pa_dbm_e pa_level = RF24_PA_MIN);
+        void setRxRobot(Radio::Device rx_robot);
+
+        template<typename T>
+        void sendMessage(T msg, Radio::Device rx_robot);
+    private:
+        Radio::Device rx_robot = ROBOT_0;
 };
