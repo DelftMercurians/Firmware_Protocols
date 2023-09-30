@@ -154,7 +154,7 @@ void CustomRF24_Base::setRxRobot(Radio::Device rx_robot) {
 }
 
 template<typename T>
-void CustomRF24_Base::sendMessage(T msg, Radio::Device rx_robot) {
+void CustomRF24_Base::sendMessageTo(T msg, Radio::Device rx_robot) {
     this->setRxRobot(rx_robot);
     this->sendMessage(msg);
 }
