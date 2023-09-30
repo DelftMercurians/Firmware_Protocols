@@ -182,6 +182,9 @@ void SerialInterface::run(char* c) {
         case FunctionType::SetFloat:
             setFloat(c+1, fun.ref_float);
             break;
+        case FunctionType::SetInt:
+            setInt(c+1, fun.ref_int);
+            break;
         default:
             Serial.println("Unhandled FunctionType");
     }
