@@ -22,6 +22,7 @@ const float UPPER_LIMIT = (1e5);
 const float LOWER_LIMIT = (-UPPER_LIMIT);
 
 // Various device IDs (0x00 -> 0x07, 3 bits)
+const size_t NUM_DEVICE_IDS = 1 << 3;
 enum class DEVICE : uint8_t {
     PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
 
@@ -193,6 +194,12 @@ typedef union CAN_ID_UNION {
         direction{dir},
         msg{value},
         config{false} {}
+
+    CAN_ID_UNION(uint32_t raw) :
+        raw{raw} {}
+
+    CAN_ID_UNION() :
+        raw{0x3FF} {}
 
     void print() {
         Serial.printf("Raw = 0x%04x\n", raw);
