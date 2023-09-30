@@ -9,9 +9,6 @@ class CustomRF24 : public RF24 {
     public:
         CustomRF24() : RF24(PB0, PA4) {}
 
-        void init(  Radio::Device device,
-                    rf24_pa_dbm_e pa_level = RF24_PA_MIN) ;
-
         template<typename T>
         void registerCallback(void (*fun)(T, uint8_t));
 
