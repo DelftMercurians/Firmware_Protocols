@@ -82,15 +82,17 @@ enum class CONFVAR : uint8_t {
     MASK = 0x3F,
 };
 
-typedef union CONFVAR_TYPE_T {
+
+typedef union {
     uint32_t val_u;
     int32_t val_i;
     float val_f;
-
-    CONFVAR_TYPE_T(float f) : val_f{f} {}
-    CONFVAR_TYPE_T(uint32_t u) : val_u{u} {}
-    CONFVAR_TYPE_T(int32_t i) : val_i{i} {}
 } CONFVAR_TYPE;
+
+inline CONFVAR_TYPE make_confvar(CONFVAR_TYPE ci) { return ci; }
+inline CONFVAR_TYPE make_confvar(float f) { CONFVAR_TYPE ci; ci.val_f=f; return ci; }
+inline CONFVAR_TYPE make_confvar(uint32_t u) { CONFVAR_TYPE ci; ci.val_u=u; return ci; }
+inline CONFVAR_TYPE make_confvar(int32_t i) { CONFVAR_TYPE ci; ci.val_i=i; return ci; }
 
 
 // Command / high speed communication identifiers
