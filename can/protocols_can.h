@@ -40,52 +40,56 @@ enum class DEVICE : uint8_t {
 // Various accessible configuration variables (0x00 -> 0x3F, 6 bits)
 enum class CONFVAR : uint8_t {
    
-    MOTION_TYPE = 0x00, // Motion control type (voltage, velocity, angle, ol_velocity, ol_angle)
-    TORQUE_TYPE = 0x01, // Torque control type (voltage, dc_current, foc_current)
+    MOTION_TYPE, // Motion control type (voltage, velocity, angle, ol_velocity, ol_angle)
+    TORQUE_TYPE, // Torque control type (voltage, dc_current, foc_current)
     
-    LIM_C = 0x02,       // Current limit
-    LIM_U = 0x03,       // Voltage limit
-    LIM_V = 0x04,       // Speed limit
+    LIM_C,       // Current limit
+    LIM_U,       // Voltage limit
+    LIM_V,       // Speed limit
     
     // Current D
-    PID_CD_P = 0x05,    // Proportional
-    PID_CD_I = 0x06,    // Integral
-    PID_CD_D = 0x07,    // Derivative
-    PID_CD_R = 0x08,    // Ramp
-    PID_CD_L = 0x09,    // Limit
-    PID_CD_F = 0x0A,    // LPF time constant
+    PID_CD_P,    // Proportional
+    PID_CD_I,    // Integral
+    PID_CD_D,    // Derivative
+    PID_CD_R,    // Ramp
+    PID_CD_L,    // Limit
+    PID_CD_F,    // LPF time constant
     
     // Current Q
-    PID_CQ_P = 0x0B,
-    PID_CQ_I = 0x0C,
-    PID_CQ_D = 0x0D,
-    PID_CQ_R = 0x0E,
-    PID_CQ_L = 0x0F,
-    PID_CQ_F = 0x10,
+    PID_CQ_P,
+    PID_CQ_I,
+    PID_CQ_D,
+    PID_CQ_R,
+    PID_CQ_L,
+    PID_CQ_F,
     
     // Velocity
-    PID_V_P = 0x11,
-    PID_V_I = 0x12,
-    PID_V_D = 0x13,
-    PID_V_R = 0x14,
-    PID_V_L = 0x15,
-    PID_V_F = 0x16,
+    PID_V_P,
+    PID_V_I,
+    PID_V_D,
+    PID_V_R,
+    PID_V_L,
+    PID_V_F,
     
     // Angle
-    PID_A_P = 0x17,
-    PID_A_I = 0x18,
-    PID_A_D = 0x19,
-    PID_A_R = 0x1A,
-    PID_A_L = 0x1B,
-    PID_A_F = 0x1C,
+    PID_A_P,
+    PID_A_I,
+    PID_A_D,
+    PID_A_R,
+    PID_A_L,
+    PID_A_F,
     
     MASK = 0x3F,
 };
 
-typedef union {
-    uint16_t val_u;
-    int16_t val_i;
+typedef union CONFVAR_TYPE_T {
+    uint32_t val_u;
+    int32_t val_i;
     float val_f;
+
+    CONFVAR_TYPE_T(float f) : val_f{f} {}
+    CONFVAR_TYPE_T(uint32_t u) : val_u{u} {}
+    CONFVAR_TYPE_T(int32_t i) : val_i{i} {}
 } CONFVAR_TYPE;
 
 
