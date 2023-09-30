@@ -26,7 +26,8 @@ enum class Device {
     Robot_4 = 5,
 };
 
-const uint64_t DefaultAddress = 0xF0F0F0F0E0LL;
+const uint64_t BaseAddress_BtR = 0x114867LL;    // Address base to robot
+const uint64_t BaseAddress_RtB = 0x124867LL;    // Address robot to bases
 
 /* CONFIG MESSAGES */
 // Configuration Message Types
