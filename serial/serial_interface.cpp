@@ -42,10 +42,6 @@ void SerialInterface::readFloatAndRun(char* c, void (*function) (float)) {
     function(f);
 }
 
-void SerialInterface::setFloat(char* c, float* f) {
-    *f = atof(c);
-}
-
 void SerialInterface::add(char command, void (*function) (int), String help) {
     Function fun;
     fun.typ = FunctionType::Int;
@@ -61,8 +57,28 @@ void SerialInterface::readIntAndRun(char* c, void (*function) (int)) {
     function(i);
 }
 
-void SerialInterface::setInt(char* c, int* i) {
-    *i = atoi(c);
+template<typename T>
+void SerialInterface::handleValue(char *c, T* v) {
+    if(*c == '?') {
+        printValue(*v);
+    } else {
+        setValue(c, v);
+    }
+}
+
+template<typename T>
+void SerialInterface::printValue(T v) {
+    Serial.println(v);
+}
+
+template<>
+void SerialInterface::setValue<float>(char *c, float* v) {
+    *v = atof(c);
+}
+
+template<>
+void SerialInterface::setValue<int>(char *c, int* v) {
+    *v = atoi(c);
 }
 
 void SerialInterface::add(char command, float* val, String help) {
@@ -180,10 +196,10 @@ void SerialInterface::run(char* c) {
             readIntAndRun(c+1, fun.fun_int);
             break;
         case FunctionType::SetFloat:
-            setFloat(c+1, fun.ref_float);
+            handleValue(c+1, fun.ref_float);
             break;
         case FunctionType::SetInt:
-            setInt(c+1, fun.ref_int);
+            handleValue(c+1, fun.ref_int);
             break;
         default:
             Serial.println("Unhandled FunctionType");
