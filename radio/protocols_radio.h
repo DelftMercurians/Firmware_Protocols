@@ -46,6 +46,7 @@ struct ConfigMessage {
     ConfigMessageType mt;       // Message type
     CAN::CONFVAR var;          // Variable/Parameter that is being accessed
     CAN::CONFVAR_TYPE value;    // Value to be written/that is being acknowledged
+    CAN::DEVICE device;
 };
 
 
