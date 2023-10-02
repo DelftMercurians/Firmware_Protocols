@@ -78,6 +78,9 @@ enum class CONFVAR : uint8_t {
     PID_A_R,
     PID_A_L,
     PID_A_F,
+
+    // Monitoring
+    LOOP_TIME_AVG,
     
     MASK = 0x3F,
 };
@@ -116,6 +119,8 @@ enum class MESSAGE : uint8_t {
     POSITION_MES = 0x21,    // Measured encoder position
     SPEED_MES = 0x22,       // Measured encoder speed
     TORQUE_MES = 0x23,      // Measured motor torque
+
+    REQ_CONFVAR = 0x2A,     // Request a configuration variable's value
     
     ANNOUNCE = 0x3C,        // Use for announcing presence on bus
     REQ_ANNOUNCE = 0x3D,    // Use for requesting announcing presence on bus
