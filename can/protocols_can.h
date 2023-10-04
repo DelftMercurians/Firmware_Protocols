@@ -185,7 +185,7 @@ enum class DIR : bool {
 typedef union CAN_ID_UNION {
     uint16_t raw : 11;
     struct {
-        struct {
+        union {
             CONFVAR confvar : 6;
             MESSAGE msg : 6;
         };
