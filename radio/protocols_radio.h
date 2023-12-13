@@ -9,10 +9,10 @@
 
 #define BASESTATION Radio::Device::BaseStation
 #define ROBOT_0 Radio::Device::Robot_0
-#define ROBOT_1 Radio::Device::Robot_0
-#define ROBOT_2 Radio::Device::Robot_0
-#define ROBOT_3 Radio::Device::Robot_0
-#define ROBOT_4 Radio::Device::Robot_0
+#define ROBOT_1 Radio::Device::Robot_1
+#define ROBOT_2 Radio::Device::Robot_2
+#define ROBOT_3 Radio::Device::Robot_3
+#define ROBOT_4 Radio::Device::Robot_4
 
 namespace Radio {
 
