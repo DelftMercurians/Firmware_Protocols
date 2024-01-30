@@ -71,6 +71,8 @@ struct Command {
 
     KickerCommand kicker_command;   // Command for the kicker
     float kick_time;                // How long to kick for (if kick is requested)
+
+    float fan_speed;                // Downforce fan speed (percentage)
 };
 
 
@@ -80,6 +82,7 @@ struct Reply {
     HG::Status status;          // Robot MCU status
     HG::Status md_status[5];    // Motor driver MCU statuses
     HG::Status kick_status;     // Kicker status
+    HG::Status fan_status;      // Fan status
     HG::Pose speed;             // Measured speed
 };
 
@@ -89,6 +92,7 @@ struct Status {
     HG::Status primary_status;
     CAN::MotorStatus motor_status[5];
     HG::KickerStatus kicker_status;
+    HG::Status fan_status;
 };
 
 
