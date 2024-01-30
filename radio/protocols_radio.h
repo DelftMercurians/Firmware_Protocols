@@ -50,9 +50,27 @@ struct ConfigMessage {
 
 
 /* COMMAND MESSAGES */
+// Kicker subcommands
+enum class KickerCommand : uint8_t {
+    NONE,
+
+    ARM,        // Arm the high voltage circuitry
+    DISARM,     // Disarm the high voltage circuitry
+
+    DISCHARGE,  // Discharge the capacitor
+
+    KICK,       // Kick the ball
+    CHIP,       // Chip the ball
+};
+
 // Command from mothership to robot
 struct Command {
-    HG::Pose speed;     // Desired robot speed
+    HG::Pose speed;                 // Desired robot speed
+
+    float dribbler_speed;           // Desired dribbler speed
+
+    KickerCommand kicker_command;   // Command for the kicker
+    float kick_time;                // How long to kick for (if kick is requested)
 };
 
 
@@ -60,7 +78,8 @@ struct Command {
 // Reply from robot to mothership
 struct Reply {
     HG::Status status;          // Robot MCU status
-    HG::Status md_status[4];    // Motor driver MCU statuses
+    HG::Status md_status[5];    // Motor driver MCU statuses
+    HG::Status kick_status;     // Kicker status
     HG::Pose speed;             // Measured speed
 };
 
@@ -68,7 +87,8 @@ struct Reply {
 // Repeated status heartbeat from robot
 struct Status {
     HG::Status primary_status;
-    CAN::MotorStatus motor_status[4];
+    CAN::MotorStatus motor_status[5];
+    HG::KickerStatus kicker_status;
 };
 
 
