@@ -202,6 +202,8 @@ const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
     {0x560044, DEVICE_ID::DRIVER_2},
     {0x32003C, DEVICE_ID::DRIVER_2},    // replacement board (2023-12-04 Tim)
     {0x320026, DEVICE_ID::DRIVER_3},
+    
+    {0x34004A, DEVICE_ID::DRIVER_A},    // 34004A 534B5002 20343932 Dribbler
 };
 
 // Used to send variables back to answer a request
