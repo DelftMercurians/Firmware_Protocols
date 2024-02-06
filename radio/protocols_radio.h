@@ -9,10 +9,10 @@
 
 #define BASESTATION Radio::Device::BaseStation
 #define ROBOT_0 Radio::Device::Robot_0
-#define ROBOT_1 Radio::Device::Robot_0
-#define ROBOT_2 Radio::Device::Robot_0
-#define ROBOT_3 Radio::Device::Robot_0
-#define ROBOT_4 Radio::Device::Robot_0
+#define ROBOT_1 Radio::Device::Robot_1
+#define ROBOT_2 Radio::Device::Robot_2
+#define ROBOT_3 Radio::Device::Robot_3
+#define ROBOT_4 Radio::Device::Robot_4
 
 namespace Radio {
 
@@ -26,7 +26,8 @@ enum class Device {
     Robot_4 = 5,
 };
 
-const uint64_t DefaultAddress = 0xF0F0F0F0E0LL;
+const uint64_t BaseAddress_BtR = 0x114867LL;    // Address base to robot
+const uint64_t BaseAddress_RtB = 0x124867LL;    // Address robot to bases
 
 /* CONFIG MESSAGES */
 // Configuration Message Types
@@ -49,9 +50,29 @@ struct ConfigMessage {
 
 
 /* COMMAND MESSAGES */
+// Kicker subcommands
+enum class KickerCommand : uint8_t {
+    NONE,
+
+    ARM,        // Arm the high voltage circuitry
+    DISARM,     // Disarm the high voltage circuitry
+
+    DISCHARGE,  // Discharge the capacitor
+
+    KICK,       // Kick the ball
+    CHIP,       // Chip the ball
+};
+
 // Command from mothership to robot
 struct Command {
-    HG::Pose speed;     // Desired robot speed
+    HG::Pose speed;                 // Desired robot speed
+
+    float dribbler_speed;           // Desired dribbler speed
+
+    KickerCommand kicker_command;   // Command for the kicker
+    float kick_time;                // How long to kick for (if kick is requested)
+
+    float fan_speed;                // Downforce fan speed (percentage)
 };
 
 
@@ -59,7 +80,9 @@ struct Command {
 // Reply from robot to mothership
 struct Reply {
     HG::Status status;          // Robot MCU status
-    HG::Status md_status[4];    // Motor driver MCU statuses
+    HG::Status md_status[5];    // Motor driver MCU statuses
+    HG::Status kick_status;     // Kicker status
+    HG::Status fan_status;      // Fan status
     HG::Pose speed;             // Measured speed
 };
 
@@ -67,7 +90,9 @@ struct Reply {
 // Repeated status heartbeat from robot
 struct Status {
     HG::Status primary_status;
-    CAN::MotorStatus motor_status[4];
+    CAN::MotorStatus motor_status[5];
+    HG::KickerStatus kicker_status;
+    HG::Status fan_status;
 };
 
 
@@ -91,5 +116,6 @@ struct Message {
     } msg;                      // The message contents
 };
 
+static_assert(sizeof(Message) <= 32, "Message exceeds maximum size");
 
 }

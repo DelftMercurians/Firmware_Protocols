@@ -35,8 +35,16 @@ class SerialInterface {
         void readFloatAndRun(char* c, void (*function) (float));
         // void readFloatsAndRun(char* c, void (*function) (float*, size_t));
         void readIntAndRun(char* c, void (*function) (int));
-        void setFloat(char* c, float* f);
-        void setInt(char* c, int* i);
+
+        template<typename T>
+        void handleValue(char *c, T* v);
+
+        template<typename T>
+        void printValue(T v);
+
+        template<typename T>
+        void setValue(char *c, T* v);
+
     private:
         Stream* s;
 
