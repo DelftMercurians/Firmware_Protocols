@@ -121,12 +121,12 @@ static_assert(sizeof(COMMAND) <= 8, "COMMAND exceeds maximum size");
 // *******
 
 // Motor Status message
-#define CAN_SCALE_TEMP (200.0/INT16_MAX)
-#define CAN_SCALE_BATV (50.0/INT16_MAX)
+#define CAN_SCALE_TEMP (200.0/INT8_MAX)
+#define CAN_SCALE_BATV (50.0/INT8_MAX)
 struct MotorStatus {
     HG::Status status;
-    int16_t temp;
-    int16_t battV;
+    int8_t temp;
+    int8_t battV;
 };
 struct MotorStatusMessage {
     DEVICE_ID txId;    // transmitting device
