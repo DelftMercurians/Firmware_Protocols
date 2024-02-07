@@ -149,12 +149,8 @@ void CustomRF24_Base::init(rf24_pa_dbm_e pa_level) {
 void CustomRF24_Base::setRxRobot(Radio::Device rx_robot) {
     if(rx_robot != this->rx_robot) {
         this->rx_robot = rx_robot;
+        this->closeReadingPipe(0); // close writing pipe (not sure if this works)
         this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
     }
 }
 
-template<typename T>
-void CustomRF24_Base::sendMessageTo(T msg, Radio::Device rx_robot) {
-    this->setRxRobot(rx_robot);
-    this->sendMessage(msg);
-}
