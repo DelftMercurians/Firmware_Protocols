@@ -193,7 +193,7 @@ enum class MESSAGE_ID {
 // Mapping may be done in other ways later
 const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
     {0x200034, DEVICE_ID::DRIVER_0},
-    {0x230034, DEVICE_ID::DRIVER_1},
+    {0x230034, DEVICE_ID::DRIVER_0},    // Moved due to blown board (2024-02-08 Thomas)
     {0x370033, DEVICE_ID::DRIVER_2},
     {0x220027, DEVICE_ID::DRIVER_3},
 
