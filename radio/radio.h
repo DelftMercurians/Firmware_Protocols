@@ -42,7 +42,11 @@ class CustomRF24_Base : public CustomRF24 {
         void setRxRobot(Radio::Device rx_robot);
 
         template<typename T>
-        void sendMessageTo(T msg, Radio::Device rx_robot);
-    private:
+        void sendMessageTo(T msg, Radio::Device rx_robot) {
+            this->setRxRobot(rx_robot);
+            this->sendMessage(msg);
+        }
+
+    // private:
         Radio::Device rx_robot = ROBOT_0;
 };

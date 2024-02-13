@@ -24,10 +24,16 @@ enum class Device {
     Robot_2 = 3,
     Robot_3 = 4,
     Robot_4 = 5,
+
+    Sniff_Robot_0 = 11,
+    Sniff_Robot_1 = 12,
+    Sniff_Robot_2 = 13,
+    Sniff_Robot_3 = 14,
+    Sniff_Robot_4 = 15,
 };
 
-const uint64_t BaseAddress_BtR = 0x114867LL;    // Address base to robot
-const uint64_t BaseAddress_RtB = 0x124867LL;    // Address robot to bases
+const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
+const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
 
 /* CONFIG MESSAGES */
 // Configuration Message Types
