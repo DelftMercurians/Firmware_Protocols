@@ -151,7 +151,7 @@ void CustomRF24_Base::setRxRobot(Radio::Device rx_robot) {
         this->rx_robot = rx_robot;
         this->closeReadingPipe(0); // close writing pipe (not sure if this works)
         if(rx_robot >= Radio::Device::Sniff_Robot_0) {
-            this->openReadingPipe(0, Radio::BaseAddress_RtB - 10 + (uint64_t) Radio::Device::Sniff_Robot_0);
+            this->openReadingPipe(0, (Radio::BaseAddress_BtR - 10) + (uint64_t) this->rx_robot);
         } else {
             this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
         }
