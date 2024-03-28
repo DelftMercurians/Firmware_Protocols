@@ -1,9 +1,19 @@
 #include "radio.h"
 
+CustomRF24::CustomRF24(Radio::Group group) {
+    Radio::RadioPins pins = Radio::GroupPinMap.at(group);
+    RF24(pins.ce, pins.cs);
+    if (pins.spi_bus == RADIO_SPI_1) {
+        this->spi = new SPIClass(PA7, PA6, PA5);
+    } else if (pins.spi_bus == RADIO_SPI_2) {
+        this->spi = new SPIClass(PB15, PB14, PB13);
+    }
+}
+
 // Initialise Radio
 void CustomRF24::preInit(Radio::Device device, rf24_pa_dbm_e pa_level) {
     this->identity = device;
-	this->begin();
+	this->begin(this->spi);
     this->setPayloadSize(sizeof(Radio::Message));
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
 }

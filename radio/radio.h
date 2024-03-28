@@ -6,8 +6,9 @@
 #include <radio/protocols_radio.h>
 
 class CustomRF24 : public RF24 {
-    public:
-        CustomRF24() : RF24(PB0, PA4) {}
+    public:        
+        CustomRF24() : RF24(Radio::RobotPinMap.ce, Radio::RobotPinMap.cs) {}
+        CustomRF24(Radio::Group group);
 
         template<typename T>
         void registerCallback(void (*fun)(T, uint8_t));
@@ -21,6 +22,7 @@ class CustomRF24 : public RF24 {
 
     protected:
         Radio::Device identity;
+        SPIClass* spi;
 
         void preInit(Radio::Device device, rf24_pa_dbm_e pa_level);
         void postInit();
@@ -33,11 +35,15 @@ class CustomRF24 : public RF24 {
 
 class CustomRF24_Robot : public CustomRF24 {
     public:
+        using CustomRF24::CustomRF24;
+        
         void init(Radio::Device device, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
 };
 
 class CustomRF24_Base : public CustomRF24 {
     public:
+        using CustomRF24::CustomRF24;
+
         void init(rf24_pa_dbm_e pa_level = RF24_PA_MIN);
         void setRxRobot(Radio::Device rx_robot);
 

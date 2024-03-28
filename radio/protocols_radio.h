@@ -14,6 +14,14 @@
 #define ROBOT_3 Radio::Device::Robot_3
 #define ROBOT_4 Radio::Device::Robot_4
 
+#define GROUP_0 Radio::Group::Group_0
+#define GROUP_1 Radio::Group::Group_1
+#define GROUP_2 Radio::Group::Group_2
+#define GROUP_3 Radio::Group::Group_3
+
+#define RADIO_SPI_1 Radio::SpiBus::Spi_1
+#define RADIO_SPI_2 Radio::SpiBus::Spi_2
+
 namespace Radio {
 
 // Due to limitations of the radio, there can only be 5 robots for now
@@ -30,6 +38,38 @@ enum class Device {
     Sniff_Robot_2 = 13,
     Sniff_Robot_3 = 14,
     Sniff_Robot_4 = 15,
+};
+
+const int NumberOfRadios = 4;
+enum class Group {
+    Group_0 = 0,
+    Group_1 = 1,
+    Group_2 = 2,
+    Group_3 = 3,
+};
+
+const std::map<Device, Group> RobotGroupMap = {
+    { ROBOT_0, GROUP_0 }, 
+    { ROBOT_1, GROUP_0 }, 
+    { ROBOT_2, GROUP_1 }, 
+    { ROBOT_3, GROUP_1 },
+};
+
+enum class SpiBus {
+    Spi_1 = 1,
+    Spi_2 = 2,
+};
+struct RadioPins {
+    int ce;
+    int cs;
+    SpiBus spi_bus;
+};
+const RadioPins RobotPinMap = { PB0, PA4, RADIO_SPI_1 };
+const std::map<Group, RadioPins> GroupPinMap = {
+    { GROUP_0, { PB0, PA3, RADIO_SPI_1 }},
+    { GROUP_1, { PB1, PA4, RADIO_SPI_1 }},
+    { GROUP_2, { PB10, PA11, RADIO_SPI_2 }},
+    { GROUP_3, { PB11, PA12, RADIO_SPI_2 }},
 };
 
 const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
