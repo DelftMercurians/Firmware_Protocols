@@ -80,7 +80,6 @@ void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, uint
     callback_status = fun;
 }
 
-
 bool CustomRF24::run() {
     uint8_t pipe = 0;
     if(!this->available(&pipe)){
