@@ -1,18 +1,7 @@
 #include "radio.h"
 
-CustomRF24::CustomRF24(Radio::Group group) {
-    Radio::RadioPins pins = Radio::GroupPinMap.at(group);
-    RF24(pins.ce, pins.cs);
-    if (pins.spi_bus == RADIO_SPI_1) {
-        this->spi = new SPIClass(PA7, PA6, PA5);
-    } else if (pins.spi_bus == RADIO_SPI_2) {
-        this->spi = new SPIClass(PB15, PB14, PB13);
-    }
-}
-
 // Initialise Radio
-void CustomRF24::preInit(Radio::Device device, rf24_pa_dbm_e pa_level) {
-    this->identity = device;
+void CustomRF24::preInit(rf24_pa_dbm_e pa_level) {
 	this->begin(this->spi);
     this->setPayloadSize(sizeof(Radio::Message));
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
@@ -136,35 +125,59 @@ bool CustomRF24::run() {
 
 // --------------ROBOT------------------ //
 
-void CustomRF24_Robot::init(Radio::Device device, rf24_pa_dbm_e pa_level) {
-    this->preInit(device, pa_level);
-    this->openReadingPipe(1, Radio::BaseAddress_BtR + (uint64_t) device);   // Listen on base to robot address
-    this->openWritingPipe(Radio::BaseAddress_RtB + (uint64_t) device);      // Transmit on robot to base address
+CustomRF24_Robot::CustomRF24_Robot(uint8_t robot) {
+    this->identity = robot;
+    RF24(RadioPins::RobotPinMap.ce, RadioPins::RobotPinMap.cs);
+}
+
+void CustomRF24_Robot::init(rf24_pa_dbm_e pa_level) {
+    this->preInit(pa_level);
+    this->openReadingPipe(1, Radio::BaseAddress_BtR + (uint64_t) identity);   // Listen on base to robot address
+    this->openWritingPipe(Radio::BaseAddress_RtB + (uint64_t) identity);      // Transmit on robot to base address
     this->postInit();
 }
 
 
 // ---------------BASE------------------ //
 
+CustomRF24_Base::CustomRF24_Base(uint8_t group) {
+    this->identity = group;
+    RadioPins::RadioPins pins = RadioPins::GroupPinMap.at(group);
+    RF24(pins.ce, pins.cs);
+    if (pins.spi_bus == RadioPins::SpiBus::Spi_1) {
+        this->spi = new SPIClass(PA7, PA6, PA5);
+    } else if (pins.spi_bus == RadioPins::SpiBus::Spi_1) {
+        this->spi = new SPIClass(PB15, PB14, PB13);
+    }
+}
+
 void CustomRF24_Base::init(rf24_pa_dbm_e pa_level) {
-    this->preInit(Radio::Device::BaseStation, pa_level);
+    this->preInit(pa_level);
     this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
     // Open all five reading pipes (one for each robot)
-    for(uint8_t pipe = 1; pipe < 6; pipe++){
-        this->openReadingPipe(pipe, Radio::BaseAddress_RtB + pipe);
+    for (uint8_t pipe = 1; pipe < 5; pipe++) {
+        this->openReadingPipe(pipe, Radio::BaseAddress_RtB + 4*identity + pipe);
     }
     this->postInit();
 }
 
-void CustomRF24_Base::setRxRobot(Radio::Device rx_robot) {
+void CustomRF24_Base::setRxRobot(uint8_t rx_robot) {
     if(rx_robot != this->rx_robot) {
         this->rx_robot = rx_robot;
-        this->closeReadingPipe(0); // close writing pipe (not sure if this works)
-        if(rx_robot >= Radio::Device::Sniff_Robot_0) {
-            this->openReadingPipe(0, (Radio::BaseAddress_BtR - 10) + (uint64_t) this->rx_robot);
-        } else {
-            this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
-        }
+        this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
     }
 }
 
+template<typename T>
+void CustomRF24_Base::sendMessageToRobot(T msg, uint8_t rx_robot) {
+    this->setRxRobot(rx_robot);
+    this->sendMessage(msg);
+}
+
+/*
+        if(rx_robot >= Radio::Device::Sniff_Robot_0) {
+            this->openReadingPipe(0, (Radio::BaseAddress_BtR - 10) + (uint64_t) this->rx_robot);
+        } else {
+            
+        }
+*/
