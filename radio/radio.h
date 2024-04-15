@@ -49,7 +49,10 @@ class CustomRF24_Base : public CustomRF24 {
         void setRxRobot(uint8_t rx_robot);
 
         template<typename T>
-        void sendMessageToRobot(T msg, uint8_t rx_robot);
+        void sendMessageToRobot(T msg, uint8_t rx_robot) {
+            this->setRxRobot(rx_robot);
+            this->sendMessage(msg);
+        }
 
     private:
         uint8_t rx_robot = 0;

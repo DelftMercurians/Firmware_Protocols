@@ -167,12 +167,6 @@ void CustomRF24_Base::setRxRobot(uint8_t rx_robot) {
     }
 }
 
-template<typename T>
-void CustomRF24_Base::sendMessageToRobot(T msg, uint8_t rx_robot) {
-    this->setRxRobot(rx_robot);
-    this->sendMessage(msg);
-}
-
 /*
         if(rx_robot >= Radio::Device::Sniff_Robot_0) {
             this->openReadingPipe(0, (Radio::BaseAddress_BtR - 10) + (uint64_t) this->rx_robot);
