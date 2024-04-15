@@ -4,25 +4,25 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #include <radio/protocols_radio.h>
+#include <radio/pins_radio.h>
 
 class CustomRF24 : public RF24 {
-    public:
-        CustomRF24() : RF24(PB0, PA4) {}
-
+    public:                
         template<typename T>
         void registerCallback(void (*fun)(T, uint8_t));
-
-        template<typename T>
-        void sendMessage(T msg);
 
         void receiveMessage(Radio::Message& msg);
 
         bool run();
 
     protected:
-        Radio::Device identity;
+        uint8_t identity;
+        SPIClass* spi;
 
-        void preInit(Radio::Device device, rf24_pa_dbm_e pa_level);
+        template<typename T>
+        void sendMessage(T msg);
+
+        void preInit(rf24_pa_dbm_e pa_level);
         void postInit();
 
         void (*callback_confmsg)(Radio::ConfigMessage, uint8_t) = nullptr;
@@ -33,20 +33,27 @@ class CustomRF24 : public RF24 {
 
 class CustomRF24_Robot : public CustomRF24 {
     public:
-        void init(Radio::Device device, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
+        CustomRF24_Robot(uint8_t robot);
+        
+        void init(rf24_pa_dbm_e pa_level = RF24_PA_MIN);
+
+        using CustomRF24::sendMessage;
 };
 
 class CustomRF24_Base : public CustomRF24 {
     public:
+        CustomRF24_Base(uint8_t group);
+        CustomRF24_Base() {}; // TODO: this is a hack since we use an array of these in the radio station, should find a better way
+
         void init(rf24_pa_dbm_e pa_level = RF24_PA_MIN);
-        void setRxRobot(Radio::Device rx_robot);
+        void setRxRobot(uint8_t rx_robot);
 
         template<typename T>
-        void sendMessageTo(T msg, Radio::Device rx_robot) {
+        void sendMessageToRobot(T msg, uint8_t rx_robot) {
             this->setRxRobot(rx_robot);
             this->sendMessage(msg);
         }
 
-    // private:
-        Radio::Device rx_robot = ROBOT_0;
+    private:
+        uint8_t rx_robot = 0;
 };
