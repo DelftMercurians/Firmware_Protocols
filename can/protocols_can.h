@@ -22,14 +22,14 @@ namespace CAN {
 
 // Make message IDs from variable and access type
 #define CAN_GENERATE_MESSAGE_ID_(variable, access) ((uint32_t) variable | (uint32_t) access)
-#define CAN_GENERATE_MESSAGE_ID(variable, access) (CAN::MESSAGE_ID) (CAN_GENERATE_MESSAGE_ID_(variable, access))
+#define CAN_GENERATE_MESSAGE_ID(variable, access) (::CAN::MESSAGE_ID) (CAN_GENERATE_MESSAGE_ID_(variable, access))
 
 // Make full ID from destination device and message type
 #define CAN_MAKE_ID(Device, Message)     (((uint16_t) Device<<8) | (uint16_t) Message)
 
 // Extract message and device ids from full ID
-#define CAN_MAKE_MESSAGE_ID(CanID)            (CAN::MESSAGE_ID) (CanID & 0xff)
-#define CAN_GET_DEVICE_ID(CanID)             (CAN::DEVICE_ID) (CanID>>8)
+#define CAN_MAKE_MESSAGE_ID(CanID)            (::CAN::MESSAGE_ID) (CanID & 0xff)
+#define CAN_GET_DEVICE_ID(CanID)             (::CAN::DEVICE_ID) (CanID>>8)
 
 #define UPPER_LIMIT (1e5)
 #define LOWER_LIMIT (-UPPER_LIMIT)
@@ -225,3 +225,74 @@ struct Value_Return {
 static_assert(sizeof(Value_Return) <= 8, "Value_Return exceeds maximum size");
 
 }
+
+
+// =========== Definitions for STM32 CAN chip (MCP2562) ============
+// Modified from: https://github.com/nopnop2002/Arduino-STM32-CAN/blob/master/stm32f103/stm32f103.ino
+namespace STM32::CAN {
+
+// Symbolic names for bit rate of CAN message
+enum Bitrate {
+    CAN_50kbps = 0,
+    CAN_100kbps,
+    CAN_125kbps,
+    CAN_250kbps,
+    CAN_500kbps,
+    CAN_1000kbps
+};
+
+// Real speed for bit rate of CAN message
+constexpr uint32_t SPEED[6] =
+  {50 * 1000, 100 * 1000, 125 * 1000, 250 * 1000, 500 * 1000, 1000 * 1000};
+
+enum Error {
+    Unsupported_bit_rate = 1000,
+    MSR_INAK_not_set = 1001,
+    MSR_INAK_not_cleared = 1002,
+    Unsupported_frame_format = 1003
+};
+
+// Symbolic names for remapping CAN_RX and CAN_TX pins respectively
+enum class Ports {
+    PA11_PA12 = 0,
+    PB8_PB9 = 2,
+    PD0_PD1 = 3
+};
+
+// Symbolic names for formats of CAN message
+enum Format {
+    Standard = 0,
+    Extended
+};
+
+// Symbolic names for type of CAN message
+enum Frame {
+    Data = 0,
+    Remote
+};
+
+typedef struct {
+    uint32_t id;      // 29 bit identifier
+    uint8_t data[8];  // Data field
+    uint8_t len;      // Length of data field in bytes
+    uint8_t format;   // 0 - Standard, 1- Extended Identifier
+    uint8_t type;     // 0 - Data Frame, 1 - Remote Frame
+} msg_t;
+
+typedef struct {
+    uint16_t baud_rate_prescaler;          // [1 to 1024]
+    uint8_t time_segment_1;                // [1 to 16]
+    uint8_t time_segment_2;                // [1 to 8]
+    uint8_t resynchronization_jump_width;  // [1 to 4] (recommended value is 1)
+} bit_timing_config_t;
+
+constexpr uint32_t TIR_TXRQ = (1U << 0U);  // Bit 0: Transmit Mailbox Request
+constexpr uint32_t TIR_RTR = (1U << 1U);   // Bit 1: Remote Transmission Request
+constexpr uint32_t TIR_IDE = (1U << 2U);   // Bit 2: Identifier Extension
+constexpr uint32_t RIR_RTR = (1U << 1U);   // Bit 1: Remote Transmission Request
+constexpr uint32_t RIR_IDE = (1U << 2U);   // Bit 2: Identifier Extension
+
+constexpr uint32_t EXT_ID_MASK = 0x1FFFFFFFU;
+constexpr uint32_t STD_ID_MASK = 0x000007FFU;
+
+}  // namespace STM32::CAN
