@@ -13,7 +13,7 @@ struct RadioPins {
     int cs;
     SpiBus spi_bus;
 };
-const RadioPins RobotPinMap = { PB0, PA4, SpiBus::Spi_1 };
+const RadioPins RobotPinMap = { PB0, PA4, SpiBus::Spi_2 };
 const std::map<uint8_t, RadioPins> GroupPinMap = {
     { 0, { PB0, PA3, SpiBus::Spi_1 }},
     { 1, { PB1, PA4, SpiBus::Spi_1 }},
