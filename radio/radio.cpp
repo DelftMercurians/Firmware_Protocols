@@ -3,6 +3,10 @@
 // Initialise Radio
 void CustomRF24::preInit(rf24_pa_dbm_e pa_level) {
 	this->begin(this->spi);
+    Serial.printf("Initialised Radio, IDENTITY = 0x%X\n", IDENTITY);
+	Serial.printf("Failure detected: %s\n", this->failureDetected ? "true" : "false");
+	Serial.printf("isChipConnected: %s\n", this->isChipConnected() ? "true" : "false");
+	Serial.printf("isPVariant: %s\n", this->isPVariant() ? "true" : "false");
     this->setPayloadSize(sizeof(Radio::Message));
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
 }
@@ -124,10 +128,17 @@ bool CustomRF24::run() {
 
 // --------------ROBOT------------------ //
 
-CustomRF24_Robot::CustomRF24_Robot(uint8_t robot) {
+CustomRF24_Robot::CustomRF24_Robot(uint8_t robot)
+    : CustomRF24(RadioPins::RobotPinMap.ce, RadioPins::RobotPinMap.cs)
+{
     this->identity = robot;
-    RF24(RadioPins::RobotPinMap.ce, RadioPins::RobotPinMap.cs);
+    if (RadioPins::RobotPinMap.spi_bus == RadioPins::SpiBus::Spi_1) {
+        this->spi = new SPIClass(PA7, PA6, PA5);
+    } else if (RadioPins::RobotPinMap.spi_bus == RadioPins::SpiBus::Spi_2) {
+        this->spi = new SPIClass(PB15, PB14, PB13);
+    }
 }
+
 
 void CustomRF24_Robot::init(rf24_pa_dbm_e pa_level) {
     this->preInit(pa_level);
@@ -145,7 +156,7 @@ CustomRF24_Base::CustomRF24_Base(uint8_t group) {
     RF24(pins.ce, pins.cs);
     if (pins.spi_bus == RadioPins::SpiBus::Spi_1) {
         this->spi = new SPIClass(PA7, PA6, PA5);
-    } else if (pins.spi_bus == RadioPins::SpiBus::Spi_1) {
+    } else if (pins.spi_bus == RadioPins::SpiBus::Spi_2) {
         this->spi = new SPIClass(PB15, PB14, PB13);
     }
 }

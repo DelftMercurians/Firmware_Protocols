@@ -7,7 +7,10 @@
 #include <radio/pins_radio.h>
 
 class CustomRF24 : public RF24 {
-    public:                
+    public:
+        CustomRF24() : RF24() {};
+        CustomRF24(rf24_gpio_pin_t _cepin, rf24_gpio_pin_t _cspin) : RF24(_cepin, _cspin) {};
+
         template<typename T>
         void registerCallback(void (*fun)(T, uint8_t));
 
