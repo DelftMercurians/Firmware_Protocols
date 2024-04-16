@@ -36,9 +36,9 @@ class CustomRF24 : public RF24 {
 
 class CustomRF24_Robot : public CustomRF24 {
     public:
-        CustomRF24_Robot(uint8_t robot);
+        CustomRF24_Robot();
         
-        void init(rf24_pa_dbm_e pa_level = RF24_PA_MIN);
+        void init(uint8_t robot, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
 
         using CustomRF24::sendMessage;
 };

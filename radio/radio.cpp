@@ -128,10 +128,9 @@ bool CustomRF24::run() {
 
 // --------------ROBOT------------------ //
 
-CustomRF24_Robot::CustomRF24_Robot(uint8_t robot)
+CustomRF24_Robot::CustomRF24_Robot()
     : CustomRF24(RadioPins::RobotPinMap.ce, RadioPins::RobotPinMap.cs)
 {
-    this->identity = robot;
     if (RadioPins::RobotPinMap.spi_bus == RadioPins::SpiBus::Spi_1) {
         this->spi = new SPIClass(PA7, PA6, PA5);
     } else if (RadioPins::RobotPinMap.spi_bus == RadioPins::SpiBus::Spi_2) {
@@ -140,7 +139,8 @@ CustomRF24_Robot::CustomRF24_Robot(uint8_t robot)
 }
 
 
-void CustomRF24_Robot::init(rf24_pa_dbm_e pa_level) {
+void CustomRF24_Robot::init(uint8_t robot, rf24_pa_dbm_e pa_level) {
+    this->identity = robot;
     this->preInit(pa_level);
     this->openReadingPipe(1, Radio::BaseAddress_BtR + (uint64_t) identity);   // Listen on base to robot address
     this->openWritingPipe(Radio::BaseAddress_RtB + (uint64_t) identity);      // Transmit on robot to base address
