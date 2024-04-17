@@ -3,7 +3,7 @@
 // Initialise Radio
 void CustomRF24::preInit(rf24_pa_dbm_e pa_level) {
 	this->begin(this->spi);
-    Serial.printf("Initialised Radio, IDENTITY = 0x%X\n", IDENTITY);
+    Serial.printf("Initialised Radio, IDENTITY = 0x%X\n", this->identity);
 	Serial.printf("Failure detected: %s\n", this->failureDetected ? "true" : "false");
 	Serial.printf("isChipConnected: %s\n", this->isChipConnected() ? "true" : "false");
 	Serial.printf("isPVariant: %s\n", this->isPVariant() ? "true" : "false");
