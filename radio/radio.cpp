@@ -3,7 +3,7 @@
 // Initialise Radio
 void CustomRF24::preInit(Radio::Device device, rf24_pa_dbm_e pa_level) {
     this->identity = device;
-	this->begin();
+	this->begin(PB1, PA4);
     this->setPayloadSize(sizeof(Radio::Message));
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
 }
