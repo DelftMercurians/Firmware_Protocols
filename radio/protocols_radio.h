@@ -7,33 +7,15 @@
 #include "../utils.h"
 #include "../can/protocols_can.h"
 
-#define BASESTATION Radio::Device::BaseStation
-#define ROBOT_0 Radio::Device::Robot_0
-#define ROBOT_1 Radio::Device::Robot_1
-#define ROBOT_2 Radio::Device::Robot_2
-#define ROBOT_3 Radio::Device::Robot_3
-#define ROBOT_4 Radio::Device::Robot_4
-
 namespace Radio {
-
-// Due to limitations of the radio, there can only be 5 robots for now
-enum class Device {
-    BaseStation = 0,
-    Robot_0 = 1,
-    Robot_1 = 2,
-    Robot_2 = 3,
-    Robot_3 = 4,
-    Robot_4 = 5,
-
-    Sniff_Robot_0 = 11,
-    Sniff_Robot_1 = 12,
-    Sniff_Robot_2 = 13,
-    Sniff_Robot_3 = 14,
-    Sniff_Robot_4 = 15,
-};
 
 const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
+
+const uint8_t NumberOfRadios = 4;
+const uint8_t NumberOfRobots = 16;
+
+const uint8_t NumberOfRobotsPerRadio = (NumberOfRobots + NumberOfRadios - 1) / NumberOfRadios;
 
 /* CONFIG MESSAGES */
 // Configuration operations
