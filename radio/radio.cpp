@@ -1,4 +1,5 @@
 #include "radio.h"
+#include "radio/protocols_radio.h"
 
 // Initialise Radio
 void CustomRF24::preInit(Radio::Device device, rf24_pa_dbm_e pa_level) {
@@ -47,11 +48,32 @@ void CustomRF24::sendMessage<Radio::Reply>(Radio::Reply msgi) {
     msg.msg.r = msgi; 
     this->sendMessage(msg);
 }
+// template<>
+// void CustomRF24::sendMessage<Radio::Status>(Radio::Status msgi) {
+//     Radio::Message msg;
+//     msg.mt = Radio::MessageType::Status;
+//     msg.msg.s = msgi;
+//     this->sendMessage(msg);
+// }
 template<>
-void CustomRF24::sendMessage<Radio::Status>(Radio::Status msgi) {
+void CustomRF24::sendMessage<Radio::PrimaryStatusHF>(Radio::PrimaryStatusHF msgi) {
     Radio::Message msg;
-    msg.mt = Radio::MessageType::Status;
-    msg.msg.s = msgi; 
+    msg.mt = Radio::MessageType::PrimaryStatusHF;
+    msg.msg.ps_hf = msgi; 
+    this->sendMessage(msg);
+}
+template<>
+void CustomRF24::sendMessage<Radio::PrimaryStatusLF>(Radio::PrimaryStatusLF msgi) {
+    Radio::Message msg;
+    msg.mt = Radio::MessageType::PrimaryStatusLF;
+    msg.msg.ps_lf = msgi; 
+    this->sendMessage(msg);
+}
+template<>
+void CustomRF24::sendMessage<Radio::ImuReadings>(Radio::ImuReadings msgi) {
+    Radio::Message msg;
+    msg.mt = Radio::MessageType::ImuReadings;
+    msg.msg.ir = msgi; 
     this->sendMessage(msg);
 }
 
@@ -76,9 +98,24 @@ void CustomRF24::registerCallback<Radio::Reply>(void (*fun)(Radio::Reply, uint8_
     callback_reply = fun;
 }
 
+// template<>
+// void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, uint8_t)) {
+//     callback_status = fun;
+// }
+
 template<>
-void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, uint8_t)) {
-    callback_status = fun;
+void CustomRF24::registerCallback<Radio::PrimaryStatusHF>(void (*fun)(Radio::PrimaryStatusHF, uint8_t)) {
+    callback_status_hf = fun;
+}
+
+template<>
+void CustomRF24::registerCallback<Radio::PrimaryStatusLF>(void (*fun)(Radio::PrimaryStatusLF, uint8_t)) {
+    callback_status_lf = fun;
+}
+
+template<>
+void CustomRF24::registerCallback<Radio::ImuReadings>(void (*fun)(Radio::ImuReadings, uint8_t)) {
+    callback_imu_readings = fun;
 }
 
 
@@ -91,6 +128,7 @@ bool CustomRF24::run() {
     Radio::Message msg;
     msg.mt = Radio::MessageType::None;
     receiveMessage(msg);
+    // TODO: can be replaced by a template
     switch(msg.mt) {
         case Radio::MessageType::ConfigMessage:
             if(callback_confmsg != nullptr){
@@ -107,9 +145,19 @@ bool CustomRF24::run() {
                 callback_reply(msg.msg.r, pipe);
             }
             return true;
-        case Radio::MessageType::Status:
-            if(callback_status != nullptr){
-                callback_status(msg.msg.s, pipe);
+        // case Radio::MessageType::Status:
+        //     if(callback_status != nullptr){
+        //         callback_status(msg.msg.s, pipe);
+        //     }
+        //     return true;
+        case Radio::MessageType::PrimaryStatusHF:
+            if(callback_status_hf != nullptr){
+                callback_status_hf(msg.msg.ps_hf, pipe);
+            }
+            return true;
+        case Radio::MessageType::PrimaryStatusLF:
+            if(callback_status_lf != nullptr){
+                callback_status_lf(msg.msg.ps_lf, pipe);
             }
             return true;
         case Radio::MessageType::None:

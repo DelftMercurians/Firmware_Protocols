@@ -36,8 +36,8 @@ const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
 
 /* CONFIG MESSAGES */
-// Configuration Message Types
-enum class ConfigMessageType {
+// Configuration operations
+enum class ConfigOperation {
     NONE,                   // Don't do anything with this
     SET_DEFAULT,            // Set a parameter to defaults
     SET_DEFAULT_RETURN,     // Reply stating value set to defaults
@@ -49,7 +49,7 @@ enum class ConfigMessageType {
 
 // Configuration message (bidirectional)
 struct ConfigMessage {
-    ConfigMessageType mt;       // Message type
+    ConfigOperation op;         // Configuration operation
     CAN::VARIABLE var;          // Variable/Parameter that is being accessed
     CAN_VARIABLE_TYPE value;    // Value to be written/that is being acknowledged
 };
@@ -83,6 +83,7 @@ struct Command {
 
 
 /* REPLY MESSAGES */
+// TODO: scrap this
 // Reply from robot to mothership
 struct Reply {
     HG::Status status;          // Robot MCU status
@@ -95,12 +96,39 @@ struct Reply {
 /* STATUS MESSAGES */
 // Repeated status heartbeat from robot
 struct Status {
-    HG::Status primary_status;
-    CAN::MotorStatus motor_status[5];
-    HG::KickerStatus kicker_status;
-    HG::Status fan_status;
+    // HG::Status primary_status;
+    // CAN::MotorStatus motor_status[5];
+    // HG::KickerStatus kicker_status;
+    // HG::Status fan_status;
 };
 
+struct PrimaryStatusHF {
+    uint16_t pressure;
+    float motor_speeds[5];  // TODO: motor speeds readings (for later)
+    bool breakbeam_state[2];
+};
+
+struct PrimaryStatusLF {
+    uint8_t pack_voltages[2];
+    uint8_t motor_driver_temps[5];
+    uint8_t cap_voltage;
+    uint8_t kicker_temp;
+
+    HG::Status primary_status;
+    HG::Status kicker_status;
+    HG::Status fan_status;
+    HG::Status motor_status[5];
+    HG::Status imu_status;  // TODO
+};
+
+struct ImuReadings {
+    float ang_x;
+    float ang_y;
+    // float ang_z;
+    float ang_wx;
+    float ang_wy;
+    // float ang_wz;
+};
 
 // A list of all possible message types transmitted over radio
 enum class MessageType : uint8_t {
@@ -108,7 +136,10 @@ enum class MessageType : uint8_t {
     Command,            // A command message
     Reply,              // A reply from the robot
     ConfigMessage,      // A configuration message
-    Status,             // A hearbeat status message
+    // Status,             // A hearbeat status message
+    PrimaryStatusHF,    // A hearbeat status message (high freq.)
+    PrimaryStatusLF,    // A hearbeat status message (low freq.)
+    ImuReadings,        // IMU readings message
 };
 
 // A structure that can hold messages of any type
@@ -118,7 +149,10 @@ struct Message {
         Command c;
         Reply r;
         ConfigMessage cm;
-        Status s;
+        // Status s;
+        PrimaryStatusHF ps_hf;
+        PrimaryStatusLF ps_lf;
+        ImuReadings ir;
     } msg;                      // The message contents
 };
 

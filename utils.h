@@ -37,7 +37,7 @@ enum class Status : uint8_t {
 #define KICKER_SCALE_VCAP (260.0/UINT8_MAX)
 struct KickerStatus {
     HG::Status status;
-    int8_t temp;
+    uint8_t temp;
     uint8_t capv;
 };
 

@@ -28,7 +28,10 @@ class CustomRF24 : public RF24 {
         void (*callback_confmsg)(Radio::ConfigMessage, uint8_t) = nullptr;
         void (*callback_command)(Radio::Command, uint8_t) = nullptr;
         void (*callback_reply)(Radio::Reply, uint8_t) = nullptr;
-        void (*callback_status)(Radio::Status, uint8_t) = nullptr;
+        // void (*callback_status)(Radio::Status, uint8_t) = nullptr;
+        void (*callback_status_hf)(Radio::PrimaryStatusHF, uint8_t) = nullptr;
+        void (*callback_status_lf)(Radio::PrimaryStatusLF, uint8_t) = nullptr;
+        void (*callback_imu_readings)(Radio::ImuReadings, uint8_t) = nullptr;
 };
 
 class CustomRF24_Robot : public CustomRF24 {
