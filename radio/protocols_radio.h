@@ -99,8 +99,8 @@ struct PrimaryStatusLF {
     HG::Status primary_status;
     HG::Status kicker_status;
     HG::Status fan_status;
+    HG::Status imu_status;  // TODO: IMU chip status (for later)
     HG::Status motor_status[5];
-    HG::Status imu_status;  // TODO
 };
 
 struct ImuReadings {
