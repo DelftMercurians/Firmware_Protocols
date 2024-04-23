@@ -9,6 +9,8 @@
 
 namespace Radio {
 
+typedef uint8_t SSL_ID;
+
 const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
 
@@ -106,4 +108,23 @@ struct Message {
 
 static_assert(sizeof(Message) <= 32, "Message exceeds maximum size");
 
+// These functions define robot <=> radio (pipe) assignments, only use these functions
+
+inline constexpr Radio::SSL_ID getRobotID(uint8_t pipe, uint8_t radio_id, uint8_t num_radios_online) {
+    return (pipe - 1) * num_radios_online + radio_id;
+}
+inline constexpr uint8_t getPipe(Radio::SSL_ID robot_id, uint8_t num_radios_online) {
+    return (robot_id/num_radios_online) + 1;
+}
+inline constexpr uint8_t getRadioID(Radio::SSL_ID robot_id, uint8_t num_radios_online) {
+    return (robot_id % num_radios_online);
+}
+
+// Some hamfisted tests
+static_assert(getRadioID(getRobotID(1, 3, 4), 4) == 3);
+static_assert(getPipe(getRobotID(1, 3, 4), 4) == 1);
+static_assert(getRobotID(getPipe(0xC, 4), getRadioID(0xC, 4), 4) == 0xC);
+static_assert(getRadioID(getRobotID(1, 2, 3), 3) == 2);
+static_assert(getPipe(getRobotID(4, 2, 3), 3) == 4);
+static_assert(getRobotID(getPipe(0x3, 3), getRadioID(0x3, 3), 3) == 0x3);
 }
