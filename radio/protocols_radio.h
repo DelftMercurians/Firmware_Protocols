@@ -15,9 +15,6 @@ const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
 
 const uint8_t NumberOfRadios = 4;
-const uint8_t NumberOfRobots = 16;
-
-const uint8_t NumberOfRobotsPerRadio = (NumberOfRobots + NumberOfRadios - 1) / NumberOfRadios;
 
 /* CONFIG MESSAGES */
 // Configuration Message Types
