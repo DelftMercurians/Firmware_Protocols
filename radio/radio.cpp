@@ -84,13 +84,7 @@ void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, Radi
     callback_status = fun;
 }
 
-bool CustomRF24::run() {
-    uint8_t pipe = 0;
-    if(!this->available(&pipe)){
-        // No message received
-        return false;
-    }
-    Radio::SSL_ID id = Radio::getRobotID(pipe, identity, num_radios_online); // Will give giberish for the robots
+bool CustomRF24::receiveAndCallback(uint8_t id) {
     Radio::Message msg;
     msg.mt = Radio::MessageType::None;
     receiveMessage(msg);
@@ -149,6 +143,15 @@ bool CustomRF24_Robot::init(uint8_t robot, rf24_pa_dbm_e pa_level) {
     return this->isChipConnected();
 }
 
+bool CustomRF24_Robot::run() {
+    uint8_t pipe = 0;
+    if(!this->available(&pipe)){
+        // No message received
+        return false;
+    }
+    return receiveAndCallback(pipe);
+}
+
 
 // ---------------BASE------------------ //
 CustomRF24_Base::CustomRF24_Base(uint8_t group)
@@ -170,6 +173,19 @@ void CustomRF24_Base::setRadioID(uint8_t identity) {
 bool CustomRF24_Base::init(rf24_pa_dbm_e pa_level) {
     this->preInit(pa_level);
     return this->isChipConnected();
+}
+
+bool CustomRF24_Base::run() {
+    uint8_t pipe = 0;
+    if(!this->available(&pipe)){
+        // No message received
+        return false;
+    }
+    if(pipe == 0) {
+        return receiveAndCallback(this->rx_robot);  // Received on basestation backlistening pipe
+    } else {
+        return receiveAndCallback(Radio::getRobotID(pipe, identity, num_radios_online));
+    }
 }
 
 void CustomRF24_Base::openPipes(uint8_t num_radios_online) {

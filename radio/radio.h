@@ -16,9 +16,10 @@ class CustomRF24 : public RF24 {
 
         void receiveMessage(Radio::Message& msg);
 
-        bool run();
 
     protected:
+        bool receiveAndCallback(uint8_t id);
+
         uint8_t identity;
         SPIClass* spi;
         uint8_t num_radios_online = 1;
@@ -36,9 +37,16 @@ class CustomRF24 : public RF24 {
 
 };
 
+// Note on callbacks:
+// For Robot
+//  second param is the incoming pipe number (0 to 5)
+// For Basestation
+//  second param is the robot id the transmission is from (for)
+
 class CustomRF24_Robot : public CustomRF24 {
     public:
         CustomRF24_Robot();
+        bool run();
         
         bool init(uint8_t robot, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
 
@@ -48,6 +56,7 @@ class CustomRF24_Robot : public CustomRF24 {
 class CustomRF24_Base : public CustomRF24 {
     public:
         CustomRF24_Base(uint8_t group);
+        bool run();
 
         void setRadioID(uint8_t identity);
 
