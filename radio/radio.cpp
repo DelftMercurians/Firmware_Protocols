@@ -151,16 +151,20 @@ bool CustomRF24_Robot::init(uint8_t robot, rf24_pa_dbm_e pa_level) {
 
 
 // ---------------BASE------------------ //
-CustomRF24_Base::CustomRF24_Base(uint8_t group, uint8_t identity)
+CustomRF24_Base::CustomRF24_Base(uint8_t group)
     : CustomRF24(RadioPins::GroupPinMap.at(group).ce,  RadioPins::GroupPinMap.at(group).cs)
  {
-    this->identity = identity;
+    this->identity = group;
     RadioPins::RadioPins pins = RadioPins::GroupPinMap.at(group);
     if (pins.spi_bus == RadioPins::SpiBus::Spi_1) {
         this->spi = new SPIClass(PA7, PA6, PA5);
     } else if (pins.spi_bus == RadioPins::SpiBus::Spi_2) {
         this->spi = new SPIClass(PB15, PB14, PB13);
     }
+}
+
+void CustomRF24_Base::setRadioID(uint8_t identity) {
+    this->identity = identity;
 }
 
 bool CustomRF24_Base::init(rf24_pa_dbm_e pa_level) {

@@ -47,8 +47,9 @@ class CustomRF24_Robot : public CustomRF24 {
 
 class CustomRF24_Base : public CustomRF24 {
     public:
-        CustomRF24_Base(uint8_t group, uint8_t identity);
-        CustomRF24_Base() {}; // TODO: this is a hack since we use an array of these in the radio station, should find a better way
+        CustomRF24_Base(uint8_t group);
+
+        void setRadioID(uint8_t identity);
 
         bool init(rf24_pa_dbm_e pa_level = RF24_PA_MIN);
         void openPipes(uint8_t num_radios_online);
