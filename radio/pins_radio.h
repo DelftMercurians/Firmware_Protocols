@@ -16,9 +16,9 @@ struct RadioPins {
 const RadioPins RobotPinMap = { PB0, PA4, SpiBus::Spi_2 };
 const std::map<uint8_t, RadioPins> GroupPinMap = {
     { 0, { PB0, PA3, SpiBus::Spi_1 }},
-    { 1, { PB1, PA4, SpiBus::Spi_1 }},
-    { 2, { PB10, PA11, SpiBus::Spi_2 }},
-    { 3, { PB11, PA12, SpiBus::Spi_2 }},
+    { 1, { PB11, PA1, SpiBus::Spi_2 }},
+    { 2, { PB1, PA4, SpiBus::Spi_1 }},
+    { 3, { PB10, PA0, SpiBus::Spi_2 }},
 };
 
 }
