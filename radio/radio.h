@@ -56,6 +56,7 @@ class CustomRF24_Robot : public CustomRF24 {
 class CustomRF24_Base : public CustomRF24 {
     public:
         CustomRF24_Base(uint8_t group);
+        CustomRF24_Base() {};
         bool run();
 
         void setRadioID(uint8_t identity);
