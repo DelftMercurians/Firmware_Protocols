@@ -14,8 +14,6 @@ typedef uint8_t SSL_ID;
 const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
 
-const uint8_t NumberOfRadios = 4;
-
 /* CONFIG MESSAGES */
 // Configuration Message Types
 enum class ConfigMessageType {

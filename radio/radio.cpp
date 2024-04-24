@@ -155,10 +155,10 @@ bool CustomRF24_Robot::run() {
 
 // ---------------BASE------------------ //
 CustomRF24_Base::CustomRF24_Base(uint8_t group)
-    : CustomRF24(RadioPins::GroupPinMap.at(group).ce,  RadioPins::GroupPinMap.at(group).cs)
+    : CustomRF24(RadioPins::GroupPinMap[group].ce,  RadioPins::GroupPinMap[group].cs)
  {
     this->identity = group;
-    RadioPins::RadioPins pins = RadioPins::GroupPinMap.at(group);
+    RadioPins::RadioPins pins = RadioPins::GroupPinMap[this->identity];
     if (pins.spi_bus == RadioPins::SpiBus::Spi_1) {
         this->spi = new SPIClass(PA7, PA6, PA5);
     } else if (pins.spi_bus == RadioPins::SpiBus::Spi_2) {
