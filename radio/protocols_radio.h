@@ -103,10 +103,10 @@ struct PrimaryStatusLF {
 struct ImuReadings {
     float ang_x;
     float ang_y;
-    // float ang_z;
+    float ang_z;
     float ang_wx;
     float ang_wy;
-    // float ang_wz;
+    float ang_wz;
 };
 
 // A list of all possible message types transmitted over radio

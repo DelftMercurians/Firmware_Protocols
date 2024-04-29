@@ -152,6 +152,11 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
                 callback_status_lf(msg.msg.ps_lf, id);
             }
             return true;
+        case Radio::MessageType::ImuReadings:
+            if(callback_status_lf != nullptr){
+                callback_imu_readings(msg.msg.ir, id);
+            }
+            return true;
         case Radio::MessageType::None:
             // No message received
             break;
