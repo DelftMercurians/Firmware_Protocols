@@ -30,13 +30,13 @@ class CustomRF24 : public RF24 {
         void preInit(rf24_pa_dbm_e pa_level);
         void postInit();
 
-        void (*callback_confmsg)(Radio::ConfigMessage, uint8_t) = nullptr;
-        void (*callback_command)(Radio::Command, uint8_t) = nullptr;
-        void (*callback_reply)(Radio::Reply, uint8_t) = nullptr;
+        void (*callback_confmsg)(Radio::ConfigMessage, Radio::SSL_ID) = nullptr;
+        void (*callback_command)(Radio::Command, Radio::SSL_ID) = nullptr;
+        void (*callback_reply)(Radio::Reply, Radio::SSL_ID) = nullptr;
         // void (*callback_status)(Radio::Status, uint8_t) = nullptr;
-        void (*callback_status_hf)(Radio::PrimaryStatusHF, uint8_t) = nullptr;
-        void (*callback_status_lf)(Radio::PrimaryStatusLF, uint8_t) = nullptr;
-        void (*callback_imu_readings)(Radio::ImuReadings, uint8_t) = nullptr;
+        void (*callback_status_hf)(Radio::PrimaryStatusHF, Radio::SSL_ID) = nullptr;
+        void (*callback_status_lf)(Radio::PrimaryStatusLF, Radio::SSL_ID) = nullptr;
+        void (*callback_imu_readings)(Radio::ImuReadings, Radio::SSL_ID) = nullptr;
 };
 
 // Note on callbacks:

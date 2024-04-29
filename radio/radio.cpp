@@ -142,11 +142,6 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
                 callback_reply(msg.msg.r, id);
             }
             return true;
-        // case Radio::MessageType::Status:
-        //     if(callback_status != nullptr){
-        //         callback_status(msg.msg.s, pipe);
-        //     }
-        //     return true;
         case Radio::MessageType::PrimaryStatusHF:
             if(callback_status_hf != nullptr){
                 callback_status_hf(msg.msg.ps_hf, id);
