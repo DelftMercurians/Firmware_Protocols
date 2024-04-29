@@ -110,15 +110,16 @@ struct ImuReadings {
 };
 
 // A list of all possible message types transmitted over radio
+// Note: never repeat IDs, to avoid back-compatibility bugs
 enum class MessageType : uint8_t {
-    None,               // No message received
-    Command,            // A command message
-    Reply,              // A reply from the robot
-    ConfigMessage,      // A configuration message
-    // Status,             // A hearbeat status message
-    PrimaryStatusHF,    // A hearbeat status message (high freq.)
-    PrimaryStatusLF,    // A hearbeat status message (low freq.)
-    ImuReadings,        // IMU readings message
+    None = 0x00,               // No message received
+    Command = 0x01,            // A command message
+    Reply = 0x02,              // A reply from the robot
+    ConfigMessage = 0x03,      // A configuration message
+    // Status = 0x04,             // A hearbeat status message
+    PrimaryStatusHF = 0x10,    // A hearbeat status message (high freq.)
+    PrimaryStatusLF = 0x11,    // A hearbeat status message (low freq.)
+    ImuReadings = 0x12,        // IMU readings message
 };
 
 // A structure that can hold messages of any type
