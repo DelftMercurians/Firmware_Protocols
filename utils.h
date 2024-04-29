@@ -30,6 +30,8 @@ enum class Status : uint8_t {
     ARMED,          // Kicker is armed, capacitor will be automatically recharged
     DISARMED,       // Kicker is disarmed, but capacitor may still be on
     SAFE,           // Kicker is discharged and safe to handle
+
+    NOT_INSTALLED,  // This submodule is not installed/implemented
 };
 
 // Kicker status message
