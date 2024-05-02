@@ -6,7 +6,15 @@
 // Defines many useful structures and messages that can be reused accross the codebase
 
 #pragma once
-#include <Arduino.h>
+typedef unsigned char __uint8_t;
+typedef __uint8_t uint8_t ;
+typedef signed char int8_t ;
+typedef signed short int16_t ;
+typedef unsigned short uint16_t ;
+typedef signed int int32_t ;
+typedef unsigned int uint32_t ;
+typedef signed long long int64_t ;
+typedef unsigned long long uint64_t ;
 
 namespace HG {
 
@@ -43,4 +51,22 @@ struct KickerStatus {
     uint8_t capv;
 };
 
+}
+
+namespace CAN {
+// Various device IDs (0x00 -> 0x07, 3 bits)
+#define CAN_NUM_DEVICE_IDS (1 << 3)
+enum class DEVICE_ID : uint8_t {
+    PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
+
+    ALL = 0x7,         // Send message to all devices (highest priority)
+    ANY = 0x0,         // Send message to all devices (lowest priority messages)
+
+    DRIVER_0 = 0x1,    // Motor driver 0 (Wheel motor)
+    DRIVER_1 = 0x2,    // Motor driver 1 (Wheel motor)
+    DRIVER_2 = 0x3,    // Motor driver 2 (wheel motor)
+    DRIVER_3 = 0x4,    // Motor driver 3 (wheel motor)
+
+    DRIVER_A = 0x5,    // Motor driver A (auxiliary motor)
+};
 }
