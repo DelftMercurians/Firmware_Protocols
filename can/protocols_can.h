@@ -42,6 +42,10 @@ enum class VARIABLE {
     ENABLE = 0x00,
     STATUS = 0x01,
 
+    UNIQUE_ID_0 = 0x02,
+    UNIQUE_ID_1 = 0x03,
+    UNIQUE_ID_2 = 0x04,
+
     COMMAND = 0x0A,
     ENCODER = 0x0B,
     
