@@ -1,5 +1,5 @@
 
 
 #ifndef PROTOCOL_VERSION
-  #define PROTOCOL_VERSION "#0.6"
+  #define PROTOCOL_VERSION "#0.7"
 #endif

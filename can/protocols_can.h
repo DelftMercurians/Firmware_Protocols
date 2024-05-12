@@ -46,6 +46,11 @@ enum class VARIABLE {
     UNIQUE_ID_1 = 0x03,
     UNIQUE_ID_2 = 0x04,
 
+    PACK_L_VOLTAGE = 0x05,  // Left battery pack voltage <float>
+    PACK_R_VOLTAGE = 0x06,  // Right battery pack voltage <float>
+    PACK_EN = 0x07,         // Battery pack enable <HG::PackEnable>
+    FAN_SPEED = 0x08,       // Fan speed percentage (0 = off, <50 = low, >50 = high)
+
     COMMAND = 0x0A,
     ENCODER = 0x0B,
     

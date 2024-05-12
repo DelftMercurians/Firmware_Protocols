@@ -43,16 +43,25 @@ struct KickerStatus {
     uint8_t capv;
 };
 
+// Battery pack enable/disable status
+enum class PackEnable : uint8_t {
+    BOTH = 0b11,       // Both battery packs enabled
+    LEFT_ONLY = 0b10,  // Only left battery pack enabled
+    RIGHT_ONLY = 0b01, // Only right battery pack enabled
+    OFF = 0b00         // Neither battery pack enabled, robot will shut down
+};
+
 }
 
 namespace CAN {
 // Various device IDs (0x00 -> 0x07, 3 bits)
 #define CAN_NUM_DEVICE_IDS (1 << 3)
 enum class DEVICE_ID : uint8_t {
-    PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
+    BROADCAST = 0x0,   // Send message to all devices (highest priority)
 
-    ALL = 0x7,         // Send message to all devices (highest priority)
-    ANY = 0x0,         // Send message to all devices (lowest priority messages)
+    PRIMARY = 0x6,     // Main device on bus, coordinates all other devices
+
+    POWER_BOARD = 0x7, // Power board, responsible for system on/off and fan
 
     DRIVER_0 = 0x1,    // Motor driver 0 (Wheel motor)
     DRIVER_1 = 0x2,    // Motor driver 1 (Wheel motor)
