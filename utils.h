@@ -43,13 +43,29 @@ struct KickerStatus {
     uint8_t capv;
 };
 
+enum class SUBSYSTEM : uint8_t {
+
+    MAIN_BOARD = 0x1,   // Main device on bus, coordinates all other devices (high priority messages)
+
+    KICKER = 0x2,    // Solenoid Driver board
+    POWER_BOARD = 0x3,    // Power board
+
+    TRACTION_MOTOR_0 = 0x4,    // Motor driver 0 (Wheel motor)
+    TRACTION_MOTOR_1 = 0x5,    // Motor driver 1 (Wheel motor)
+    TRACTION_MOTOR_2 = 0x6,    // Motor driver 2 (wheel motor)
+    TRACTION_MOTOR_3 = 0x7,    // Motor driver 3 (wheel motor)
+
+    DRIBBLER = 0x8,    // Motor driver (dribbler)
+
+};
+
 }
 
 namespace CAN {
 // Various device IDs (0x00 -> 0x07, 3 bits)
-#define CAN_NUM_DEVICE_IDS (1 << 3)
+const size_t NUM_DEVICE_IDS = 1 << 3;
 enum class DEVICE_ID : uint8_t {
-    PRIMARY = 0x6,     // Main device on bus, coordinates all other devices (high priority messages)
+    PRIMARY = 0x7,     // Main device on bus, coordinates all other devices (high priority messages)
 
     ALL = 0x7,         // Send message to all devices (highest priority)
     ANY = 0x0,         // Send message to all devices (lowest priority messages)
