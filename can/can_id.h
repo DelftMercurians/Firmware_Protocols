@@ -5,6 +5,7 @@
 namespace CAN {
 // Maps actual hardware UIDs to device ID
 // Mapping may be done in other ways later
+// WARNING: DEPRECATED
 const std::map<uint32_t, DEVICE_ID> DEVICE_ID_MAP {
     {0x230034, DEVICE_ID::DRIVER_0},    // Moved due to blown board (2024-02-08 Thomas)
     {0x370033, DEVICE_ID::DRIVER_2},

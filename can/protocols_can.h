@@ -16,9 +16,6 @@
 
 #pragma once
 #include "../utils.h"
-#ifndef USING_BINDGEN
-#include "can_id.h"
-#endif
 
 namespace CAN {
 
