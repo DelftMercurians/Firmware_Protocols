@@ -71,3 +71,13 @@ enum class DEVICE_ID : uint8_t {
     DRIVER_A = 0x5,    // Motor driver A (auxiliary motor)
 };
 }
+
+namespace Motor {
+// Motor Mode
+enum class Mode : uint32_t{
+    DISABLE = 0,    // Switch the motor off
+    ENABLE = 1,     // Switch the motor on
+    COAST = 2,      // Switch the motor off, but renable automaticaly when a new value is sent
+    // TODO maybe add different modes for high power/low power etc.
+};
+}
