@@ -37,6 +37,8 @@ namespace CAN {
 // Various accessible variables (0x00 -> 0x3F, 6 bits)
 enum class VARIABLE {
     ENABLE = 0x00,
+    MODE = ENABLE, // Alias
+    
     STATUS = 0x01,
 
     UNIQUE_ID_0 = 0x02,
