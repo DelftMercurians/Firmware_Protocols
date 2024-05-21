@@ -37,6 +37,7 @@ class CustomRF24 : public RF24 {
         void (*callback_status_hf)(Radio::PrimaryStatusHF, Radio::SSL_ID) = nullptr;
         void (*callback_status_lf)(Radio::PrimaryStatusLF, Radio::SSL_ID) = nullptr;
         void (*callback_imu_readings)(Radio::ImuReadings, Radio::SSL_ID) = nullptr;
+        void (*callback_msg)(Radio::Message, Radio::SSL_ID) = nullptr;
 };
 
 // Note on callbacks:

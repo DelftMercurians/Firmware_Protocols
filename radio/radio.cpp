@@ -101,6 +101,11 @@ void CustomRF24::registerCallback<Radio::Reply>(void (*fun)(Radio::Reply, Radio:
     callback_reply = fun;
 }
 
+template<>
+void CustomRF24::registerCallback<Radio::Message>(void (*fun)(Radio::Message, Radio::SSL_ID)) {
+    callback_msg = fun;
+}
+
 // template<>
 // void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, uint8_t)) {
 //     callback_status = fun;
@@ -125,6 +130,9 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
     Radio::Message msg;
     msg.mt = Radio::MessageType::None;
     receiveMessage(msg);
+    if(callback_msg != nullptr){
+        callback_msg(msg, id);
+    }
     // TODO: can be replaced by a template
     switch(msg.mt) {
         case Radio::MessageType::ConfigMessage:
