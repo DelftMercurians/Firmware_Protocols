@@ -32,6 +32,8 @@ enum class Status : uint8_t {
     SAFE,           // Kicker is discharged and safe to handle
 
     NOT_INSTALLED,  // This submodule is not installed/implemented
+
+    STANDBY,        // Submodule is inactive, but ready to go
 };
 
 // Kicker status message

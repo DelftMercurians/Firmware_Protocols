@@ -141,6 +141,11 @@ struct Message {
 
 static_assert(sizeof(Message) <= 32, "Message exceeds maximum size");
 
+struct MessageWrapper {
+    Radio::SSL_ID id;
+    Message msg;
+};
+
 // These functions define robot <=> radio (pipe) assignments, only use these functions
 
 inline constexpr Radio::SSL_ID getRobotID(uint8_t pipe, uint8_t radio_id, uint8_t num_radios_online) {
