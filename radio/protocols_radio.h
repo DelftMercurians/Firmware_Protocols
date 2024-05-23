@@ -86,7 +86,8 @@ struct Status {
 struct PrimaryStatusHF {
     uint16_t pressure;
     float motor_speeds[5];  // TODO: motor speeds readings (for later)
-    bool breakbeam_state[2];
+    bool breakbeam_ball_detected;
+    bool breakbeam_sensor_ok;
 };
 
 struct PrimaryStatusLF {
