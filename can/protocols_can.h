@@ -108,7 +108,7 @@ enum class VARIABLE {
 
 
 // Wheel speed command message
-#define CAN_SCALE_SPEED (400.0/INT16_MAX)
+const float CAN_SCALE_SPEED = (400.0/INT16_MAX);
 struct COMMAND {
     int16_t speeds[4];
 };
@@ -116,8 +116,8 @@ static_assert(sizeof(COMMAND) <= 8, "COMMAND exceeds maximum size");
 // *******
 
 // Motor Status message
-#define CAN_SCALE_TEMP (200.0/INT8_MAX)
-#define CAN_SCALE_BATV (50.0/INT8_MAX)
+const float CAN_SCALE_TEMP = (200.0/INT8_MAX);
+const float CAN_SCALE_BATV = (50.0/INT8_MAX);
 struct MotorStatus {
     HG::Status status;
     int8_t temp;
