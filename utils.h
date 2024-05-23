@@ -37,8 +37,8 @@ enum class Status : uint8_t {
 };
 
 // Kicker status message
-#define KICKER_SCALE_TEMP (100.0/INT8_MAX)
-#define KICKER_SCALE_VCAP (260.0/UINT8_MAX)
+const float KICKER_SCALE_TEMP = (100.0/INT8_MAX);
+const float KICKER_SCALE_VCAP = (260.0/UINT8_MAX);
 struct KickerStatus {
     HG::Status status;
     uint8_t temp;
