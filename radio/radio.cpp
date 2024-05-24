@@ -30,13 +30,13 @@ void CustomRF24::sendMessage(T msg) {
 }
 
 // Have a sendMessage() command for every message type
-template<>
-void CustomRF24::sendMessage<Radio::ConfigMessage>(Radio::ConfigMessage msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::ConfigMessage;
-    msg.msg.cm = msgi;
-    this->sendMessage(msg);
-}
+// template<>
+// void CustomRF24::sendMessage<Radio::ConfigMessage>(Radio::ConfigMessage msgi) {
+//     Radio::Message msg;
+//     msg.mt = Radio::MessageType::ConfigMessage;
+//     msg.msg.cm = msgi;
+//     this->sendMessage(msg);
+// }
 template<>
 void CustomRF24::sendMessage<Radio::Command>(Radio::Command msgi) {
     Radio::Message msg;
@@ -44,13 +44,13 @@ void CustomRF24::sendMessage<Radio::Command>(Radio::Command msgi) {
     msg.msg.c = msgi; 
     this->sendMessage(msg);
 }
-template<>
-void CustomRF24::sendMessage<Radio::Reply>(Radio::Reply msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::Reply;
-    msg.msg.r = msgi; 
-    this->sendMessage(msg);
-}
+// template<>
+// void CustomRF24::sendMessage<Radio::Reply>(Radio::Reply msgi) {
+//     Radio::Message msg;
+//     msg.mt = Radio::MessageType::Reply;
+//     msg.msg.r = msgi; 
+//     this->sendMessage(msg);
+// }
 // template<>
 // void CustomRF24::sendMessage<Radio::Status>(Radio::Status msgi) {
 //     Radio::Message msg;
@@ -135,21 +135,21 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
     }
     // TODO: can be replaced by a template
     switch(msg.mt) {
-        case Radio::MessageType::ConfigMessage:
-            if(callback_confmsg != nullptr){
-                callback_confmsg(msg.msg.cm, id);
-            }
-            return true;
+        // case Radio::MessageType::ConfigMessage:
+        //     if(callback_confmsg != nullptr){
+        //         callback_confmsg(msg.msg.cm, id);
+        //     }
+        //     return true;
         case Radio::MessageType::Command:
             if(callback_command != nullptr){
                 callback_command(msg.msg.c, id);
             }
             return true;
-        case Radio::MessageType::Reply:
-            if(callback_reply != nullptr){
-                callback_reply(msg.msg.r, id);
-            }
-            return true;
+        // case Radio::MessageType::Reply:
+        //     if(callback_reply != nullptr){
+        //         callback_reply(msg.msg.r, id);
+        //     }
+        //     return true;
         case Radio::MessageType::PrimaryStatusHF:
             if(callback_status_hf != nullptr){
                 callback_status_hf(msg.msg.ps_hf, id);
