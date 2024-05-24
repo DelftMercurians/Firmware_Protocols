@@ -53,7 +53,18 @@ enum class PackEnable : uint8_t {
     OFF = 0b00         // Neither battery pack enabled, robot will shut down
 };
 
-}
+struct Version {
+    uint8_t major;
+    uint8_t minor;
+    uint16_t patch;
+
+    uint8_t protocols_major;
+    uint8_t protocols_minor;
+};
+
+} // namespace HG
+
+
 
 namespace CAN {
 // Various device IDs (0x00 -> 0x07, 3 bits)
@@ -72,7 +83,10 @@ enum class DEVICE_ID : uint8_t {
 
     DRIVER_A = 0x5,    // Motor driver A (auxiliary motor)
 };
-}
+
+} // namespace CAN
+
+
 
 namespace Motor {
 // Motor Mode
@@ -82,4 +96,5 @@ enum class Mode : uint32_t{
     COAST = 2,      // Switch the motor off, but renable automaticaly when a new value is sent
     // TODO maybe add different modes for high power/low power etc.
 };
-}
+
+} // namespace Motor
