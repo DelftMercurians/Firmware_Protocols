@@ -50,16 +50,20 @@ enum class KickerCommand : uint8_t {
     POWER_BOARD_OFF,    // Switch the power board off, shouldn't happen here, but what can I say
 };
 
-// Command from mothership to robot
+// Command from mothership to robot (28 bytes)
 struct Command {
-    HG::Pose speed;                 // Desired robot speed
+    HG::Pose speed;                 // Desired robot speed (12 bytes)
+    // uint8_t _pad0;
 
-    float dribbler_speed;           // Desired dribbler speed
+    float dribbler_speed;           // Desired dribbler speed (4 bytes)
 
-    KickerCommand kicker_command;   // Command for the kicker
-    float kick_time;                // How long to kick for (if kick is requested)
+    KickerCommand kicker_command;   // Command for the kicker (1 byte)
 
-    float fan_speed;                // Downforce fan speed (percentage)
+    uint8_t _pad[3];    // Explicit padding for bindgen (3 bytes)
+
+    float kick_time;                // How long to kick for (if kick is requested) (4 bytes)
+
+    float fan_speed;                // Downforce fan speed (percentage) (4 bytes)
 };
 
 
@@ -83,13 +87,17 @@ struct Status {
     // HG::Status fan_status;
 };
 
+// High frequency primary mcu status (28 bytes)
 struct PrimaryStatusHF {
-    uint16_t pressure;
-    float motor_speeds[5];  // TODO: motor speeds readings (for later)
-    bool breakbeam_ball_detected;
-    bool breakbeam_sensor_ok;
+    uint16_t pressure;              // (2 bytes)
+    uint8_t _pad0[2];    // Explicit padding (2 bytes)
+    float motor_speeds[5];          // (20 bytes)
+    bool breakbeam_ball_detected;   // (1 byte)
+    bool breakbeam_sensor_ok;       // (1 byte)
+    uint8_t _pad1[2];    // Explicit padding (2 bytes)
 };
 
+// Low frequency primary mcu status (18 bytes)
 struct PrimaryStatusLF {
     uint8_t pack_voltages[2];
     uint8_t motor_driver_temps[5];
@@ -103,6 +111,7 @@ struct PrimaryStatusLF {
     HG::Status motor_status[5];
 };
 
+// (24 bytes)
 struct ImuReadings {
     float ang_x;
     float ang_y;
@@ -125,24 +134,33 @@ enum class MessageType : uint8_t {
     ImuReadings = 0x12,        // IMU readings message
 };
 
-// A structure that can hold messages of any type
+// A structure that can hold messages of any type (32 bytes)
 struct Message {
     MessageType mt;             // The message type
+    uint8_t _pad[3];    // Explicit padding (3 bytes)
     union {
-        Command c;
-        Reply r;
-        ConfigMessage cm;
+        Command c;  // 28 bytes
+        // Reply r;
+        // ConfigMessage cm;
         // Status s;
-        PrimaryStatusHF ps_hf;
-        PrimaryStatusLF ps_lf;
-        ImuReadings ir;
+        PrimaryStatusHF ps_hf; // 28 bytes
+        struct {
+            PrimaryStatusLF ps_lf; // 18 bytes + padding
+            uint8_t _pad0[10];
+        };
+        struct {
+            ImuReadings ir;
+            uint8_t _pad1[4];
+        };
     } msg;                      // The message contents
 };
+// constexpr size_t sizeOfT = sizeof(Message);
 
 static_assert(sizeof(Message) <= 32, "Message exceeds maximum size");
 
 struct MessageWrapper {
     Radio::SSL_ID id;
+    uint8_t _pad[3];
     Message msg;
 };
 
