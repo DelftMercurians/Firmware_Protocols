@@ -145,7 +145,9 @@ struct OverrideOdometry {
     bool set_pos_y;  // whether to override the y position value
     bool set_ang_z;  // whether to override the z angle value
 
-    uint8_t _pad[10]; // Ugh, padding manually
+    uint8_t _pad0;
+
+    uint8_t _pad[12]; // Ugh, padding manually
 };
 
 // A list of all possible message types transmitted over radio
@@ -185,7 +187,7 @@ struct Message {
         };
     } msg;                      // The message contents
 };
-constexpr size_t sizeOfT = sizeof(OverrideOdometry);
+// constexpr size_t sizeOfT = sizeof(OverrideOdometry);
 
 static_assert(sizeof(Message) <= 32, "Message exceeds maximum size");
 
