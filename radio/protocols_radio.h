@@ -138,7 +138,7 @@ struct OdometryReading {
 // (28 bytes)
 struct OverrideOdometry {
     float pos_x;    // [m]
-    float pos_z;    // [m]
+    float pos_y;    // [m]
     float ang_z;    // [rad]
 
     bool set_pos_x;  // whether to override the x position value
