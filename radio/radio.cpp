@@ -79,6 +79,20 @@ void CustomRF24::sendMessage<Radio::ImuReadings>(Radio::ImuReadings msgi) {
     msg.msg.ir = msgi; 
     this->sendMessage(msg);
 }
+template<>
+void CustomRF24::sendMessage<Radio::OdometryReading>(Radio::OdometryReading msgi) {
+    Radio::Message msg;
+    msg.mt = Radio::MessageType::OdometryReading;
+    msg.msg.odo = msgi; 
+    this->sendMessage(msg);
+}
+template<>
+void CustomRF24::sendMessage<Radio::OverrideOdometry>(Radio::OverrideOdometry msgi) {
+    Radio::Message msg;
+    msg.mt = Radio::MessageType::OverrideOdometry;
+    msg.msg.over_odo = msgi;
+    this->sendMessage(msg);
+}
 
 
 // Receive a generic message
@@ -126,6 +140,16 @@ void CustomRF24::registerCallback<Radio::ImuReadings>(void (*fun)(Radio::ImuRead
     callback_imu_readings = fun;
 }
 
+template<>
+void CustomRF24::registerCallback<Radio::OdometryReading>(void (*fun)(Radio::OdometryReading, uint8_t)) {
+    callback_odo_reading = fun;
+}
+
+template<>
+void CustomRF24::registerCallback<Radio::OverrideOdometry>(void (*fun)(Radio::OverrideOdometry, uint8_t)) {
+    callback_override_odo = fun;
+}
+
 bool CustomRF24::receiveAndCallback(uint8_t id) {
     Radio::Message msg;
     msg.mt = Radio::MessageType::None;
@@ -163,6 +187,16 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
         case Radio::MessageType::ImuReadings:
             if(callback_status_lf != nullptr){
                 callback_imu_readings(msg.msg.ir, id);
+            }
+            return true;
+        case Radio::MessageType::OdometryReading:
+            if(callback_status_lf != nullptr){
+                callback_odo_reading(msg.msg.odo, id);
+            }
+            return true;
+        case Radio::MessageType::OverrideOdometry:
+            if(callback_status_lf != nullptr){
+                callback_override_odo(msg.msg.over_odo, id);
             }
             return true;
         case Radio::MessageType::None:

@@ -121,6 +121,33 @@ struct ImuReadings {
     float ang_wz;
 };
 
+// (28 bytes)
+struct OdometryReading {
+    float pos_x;    // [m]
+    float pos_z;    // [m]
+    float ang_z;    // [rad]
+
+    float vel_x;    // [m/s]
+    float vel_y;    // [m/s]
+    float ang_wz;   // [rad/s]
+
+    float err_est;  // An estimation as to the error (no idea how I'll do this, basically just padding at this point)
+};
+
+
+// (28 bytes)
+struct OverrideOdometry {
+    float pos_x;    // [m]
+    float pos_z;    // [m]
+    float ang_z;    // [rad]
+
+    bool set_pos_x;  // whether to override the x position value
+    bool set_pos_y;  // whether to override the y position value
+    bool set_ang_z;  // whether to override the z angle value
+
+    uint8_t _pad[10]; // Ugh, padding manually
+};
+
 // A list of all possible message types transmitted over radio
 // Note: never repeat IDs, to avoid back-compatibility bugs
 enum class MessageType : uint8_t {
@@ -132,6 +159,8 @@ enum class MessageType : uint8_t {
     PrimaryStatusHF = 0x10,    // A hearbeat status message (high freq.)
     PrimaryStatusLF = 0x11,    // A hearbeat status message (low freq.)
     ImuReadings = 0x12,        // IMU readings message
+    OdometryReading = 0x13,     // Odometry reading
+    OverrideOdometry = 0x14,    // Overwrite the odometry reading
 };
 
 // A structure that can hold messages of any type (32 bytes)
@@ -144,6 +173,8 @@ struct Message {
         // ConfigMessage cm;
         // Status s;
         PrimaryStatusHF ps_hf; // 28 bytes
+        OdometryReading odo; // 28 bytes
+        OverrideOdometry over_odo; // 28 bytes
         struct {
             PrimaryStatusLF ps_lf; // 18 bytes + padding
             uint8_t _pad0[10];
@@ -154,7 +185,7 @@ struct Message {
         };
     } msg;                      // The message contents
 };
-// constexpr size_t sizeOfT = sizeof(Message);
+constexpr size_t sizeOfT = sizeof(OverrideOdometry);
 
 static_assert(sizeof(Message) <= 32, "Message exceeds maximum size");
 
