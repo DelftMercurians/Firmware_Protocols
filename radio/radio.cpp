@@ -185,17 +185,17 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
             }
             return true;
         case Radio::MessageType::ImuReadings:
-            if(callback_status_lf != nullptr){
+            if(callback_imu_readings != nullptr){
                 callback_imu_readings(msg.msg.ir, id);
             }
             return true;
         case Radio::MessageType::OdometryReading:
-            if(callback_status_lf != nullptr){
+            if(callback_odo_reading != nullptr){
                 callback_odo_reading(msg.msg.odo, id);
             }
             return true;
         case Radio::MessageType::OverrideOdometry:
-            if(callback_status_lf != nullptr){
+            if(callback_override_odo != nullptr){
                 callback_override_odo(msg.msg.over_odo, id);
             }
             return true;
