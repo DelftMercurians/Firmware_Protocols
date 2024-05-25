@@ -124,7 +124,7 @@ struct ImuReadings {
 // (28 bytes)
 struct OdometryReading {
     float pos_x;    // [m]
-    float pos_z;    // [m]
+    float pos_y;    // [m]
     float ang_z;    // [rad]
 
     float vel_x;    // [m/s]
