@@ -8,9 +8,12 @@ void CustomRF24::preInit(rf24_pa_dbm_e pa_level) {
 	Serial.printf("Failure detected: %s\n", this->failureDetected ? "true" : "false");
 	Serial.printf("isChipConnected: %s\n", this->isChipConnected() ? "true" : "false");
 	Serial.printf("isPVariant: %s\n", this->isPVariant() ? "true" : "false");
-    this->setPayloadSize(sizeof(Radio::Message));
+    // this->setPayloadSize(sizeof(Radio::Message));
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
+    this->enableDynamicPayloads();
+    this->enableAckPayload();
 }
+
 void CustomRF24::postInit() {
     this->startListening();           // Always idle in receiving mode
 }
