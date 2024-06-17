@@ -48,6 +48,7 @@ class CustomRF24 : public RF24 {
 // For Basestation
 //  second param is the robot id the transmission is from (for)
 
+const uint8_t MAX_TX_BUFFER = 5;
 class CustomRF24_Robot : public CustomRF24 {
     public:
         CustomRF24_Robot();
@@ -55,7 +56,15 @@ class CustomRF24_Robot : public CustomRF24 {
         
         bool init(uint8_t robot, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
 
+        void writeTxBuffer(uint8_t index, Radio::Message msg);
         using CustomRF24::sendMessage;
+
+    private:
+        Radio::Message txBuffer[MAX_TX_BUFFER];
+        uint8_t tx_buffer_len;
+        uint8_t tx_rotate;
+
+        void writeTx();
 };
 
 class CustomRF24_Base : public CustomRF24 {
