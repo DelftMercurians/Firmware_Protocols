@@ -163,6 +163,8 @@ enum class MessageType : uint8_t {
     ImuReadings = 0x12,        // IMU readings message
     OdometryReading = 0x13,     // Odometry reading
     OverrideOdometry = 0x14,    // Overwrite the odometry reading
+
+    NoOp = 0xFF,                // No Operation
 };
 
 // A structure that can hold messages of any type (32 bytes)
@@ -192,6 +194,12 @@ struct Message {
         _pad{0, 0, 0}
     {
 
+    }
+
+    static Message NOOP() {
+        Message msg;
+        msg.mt = MessageType::NoOp;
+        return msg;
     }
 
     Message(Command c) :
