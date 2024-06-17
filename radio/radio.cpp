@@ -91,7 +91,6 @@ void CustomRF24::registerCallback<Radio::OverrideOdometry>(void (*fun)(Radio::Ov
 }
 
 bool CustomRF24::receiveAndCallback(uint8_t id) {
-    Serial.print(" RX ");
     Radio::Message msg;
     auto size = getDynamicPayloadSize();
     receiveMessage(msg);
