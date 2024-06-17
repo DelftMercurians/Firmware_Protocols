@@ -46,10 +46,7 @@ void CustomRF24::sendMessage(T msg) {
 // }
 template<>
 void CustomRF24::sendMessage<Radio::Command>(Radio::Command msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::Command;
-    msg.msg.c = msgi; 
-    this->sendMessage(msg);
+    this->sendMessage(Radio::Message{msgi});
 }
 // template<>
 // void CustomRF24::sendMessage<Radio::Reply>(Radio::Reply msgi) {
@@ -67,38 +64,23 @@ void CustomRF24::sendMessage<Radio::Command>(Radio::Command msgi) {
 // }
 template<>
 void CustomRF24::sendMessage<Radio::PrimaryStatusHF>(Radio::PrimaryStatusHF msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::PrimaryStatusHF;
-    msg.msg.ps_hf = msgi; 
-    this->sendMessage(msg);
+    this->sendMessage(Radio::Message{msgi});
 }
 template<>
 void CustomRF24::sendMessage<Radio::PrimaryStatusLF>(Radio::PrimaryStatusLF msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::PrimaryStatusLF;
-    msg.msg.ps_lf = msgi; 
-    this->sendMessage(msg);
+    this->sendMessage(Radio::Message{msgi});
 }
 template<>
 void CustomRF24::sendMessage<Radio::ImuReadings>(Radio::ImuReadings msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::ImuReadings;
-    msg.msg.ir = msgi; 
-    this->sendMessage(msg);
+    this->sendMessage(Radio::Message{msgi});
 }
 template<>
 void CustomRF24::sendMessage<Radio::OdometryReading>(Radio::OdometryReading msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::OdometryReading;
-    msg.msg.odo = msgi; 
-    this->sendMessage(msg);
+    this->sendMessage(Radio::Message{msgi});
 }
 template<>
 void CustomRF24::sendMessage<Radio::OverrideOdometry>(Radio::OverrideOdometry msgi) {
-    Radio::Message msg;
-    msg.mt = Radio::MessageType::OverrideOdometry;
-    msg.msg.over_odo = msgi;
-    this->sendMessage(msg);
+    this->sendMessage(Radio::Message{msgi});
 }
 
 
@@ -160,23 +142,8 @@ void CustomRF24::registerCallback<Radio::OverrideOdometry>(void (*fun)(Radio::Ov
 bool CustomRF24::receiveAndCallback(uint8_t id) {
     Serial.print(" RX ");
     Radio::Message msg;
-    msg.mt = Radio::MessageType::None;
     auto size = getDynamicPayloadSize();
-    // Serial.printf(" - %u - ", size);
-
     receiveMessage(msg);
-
-    // uint32_t data[8];
-    // this->read(data, 32);
-    // // if((data[0] & 0xFL) != 0) {
-    // //     Serial.print(" !!! ");
-    // //     Serial.printf(" %u ", this->getCRCLength());
-    // // }
-    // // for(uint8_t j = 0; j < 8; j++) {
-    // Serial.printf(" %02u:%02u.%03u", data[1]/60000, (data[1]/1000)%60, data[1]%1000);
-    // // }
-    // Serial.print("\n");
-    // return false;
 
     if(callback_msg != nullptr){
         callback_msg(msg, id);
@@ -225,16 +192,16 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
             return true;
         case Radio::MessageType::None:
             // No message received
-            Serial.printf(" <%u> NONE\n", id);
+            // Serial.printf(" <%u> NONE\n", id);
             break;
         default:
             //Unknown message type
             // Serial.println(" Unknown message type received!");
-            uint8_t *data = (uint8_t*) &msg;
-            for(uint8_t i = 0; i < 32; i++) {
-                Serial.printf(" 0x%02X", data[i]);
-            }
-            Serial.println();
+            // uint8_t *data = (uint8_t*) &msg;
+            // for(uint8_t i = 0; i < 32; i++) {
+            //     Serial.printf(" 0x%02X", data[i]);
+            // }
+            // Serial.println();
             return false;
     }
     return false;
@@ -244,7 +211,8 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
 // --------------ROBOT------------------ //
 
 CustomRF24_Robot::CustomRF24_Robot()
-    : CustomRF24(RadioPins::RobotPinMap.ce, RadioPins::RobotPinMap.cs)
+    : CustomRF24(RadioPins::RobotPinMap.ce, RadioPins::RobotPinMap.cs),
+        tx_buffer_len{0}
 {
     if (RadioPins::RobotPinMap.spi_bus == RadioPins::SpiBus::Spi_1) {
         this->spi = new SPIClass(PA7, PA6, PA5);
@@ -263,13 +231,39 @@ bool CustomRF24_Robot::init(uint8_t robot, rf24_pa_dbm_e pa_level) {
     return this->isChipConnected();
 }
 
+void CustomRF24_Robot::writeTxBuffer(uint8_t index, Radio::Message msg) {
+    if(index >= MAX_TX_BUFFER) return;
+    if(index >= tx_buffer_len) tx_buffer_len = index + 1;
+    this->txBuffer[index] = msg;
+    writeTx();
+}
+
+
 bool CustomRF24_Robot::run() {
+    // Receive
     uint8_t pipe = 0;
     if(!this->available(&pipe)){
         // No message received
         return false;
     }
-    return receiveAndCallback(pipe);
+    auto ret = receiveAndCallback(pipe);
+
+    // Transmit
+    writeTx();
+
+    return ret;
+}
+
+
+void CustomRF24_Robot::writeTx() {
+    // Fill TX buffer
+    // this->flush_tx();
+    // if(tx_buffer_len >= 1) {
+    this->writeAckPayload(1, &txBuffer[tx_rotate%tx_buffer_len], sizeof(txBuffer[0]));
+    tx_rotate++;
+	//     this->writeAckPayload(1, &txBuffer[(tx_rotate + 1)%tx_buffer_len], sizeof(txBuffer[0]));
+	//     this->writeAckPayload(1, &txBuffer[(tx_rotate + 2)%tx_buffer_len], sizeof(txBuffer[0]));
+    // }
 }
 
 

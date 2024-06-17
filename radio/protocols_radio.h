@@ -186,6 +186,55 @@ struct Message {
             uint8_t _pad1[4];
         };
     } msg;                      // The message contents
+
+    Message() :
+        mt{MessageType::None},
+        _pad{0, 0, 0}
+    {
+
+    }
+
+    Message(Command c) :
+        mt{MessageType::Command},
+        _pad{0, 0, 0}
+    {
+        this->msg.c = c;
+    }
+
+    Message(OverrideOdometry over_odo) :
+        mt{MessageType::OverrideOdometry},
+        _pad{0, 0, 0}
+    {
+        this->msg.over_odo = over_odo;
+    }
+
+    Message(OdometryReading odo) :
+        mt{MessageType::OdometryReading},
+        _pad{0, 0, 0}
+    {
+        this->msg.odo = odo;
+    }
+
+    Message(PrimaryStatusLF ps_lf) :
+        mt{MessageType::PrimaryStatusLF},
+        _pad{0, 0, 0}
+    {
+        this->msg.ps_lf = ps_lf;
+    }
+
+    Message(PrimaryStatusHF ps_hf) :
+        mt{MessageType::PrimaryStatusHF},
+        _pad{0, 0, 0}
+    {
+        this->msg.ps_hf = ps_hf;
+    }
+
+    Message(ImuReadings ir) :
+        mt{MessageType::ImuReadings},
+        _pad{0, 0, 0}
+    {
+        this->msg.ir = ir;
+    }
 };
 // constexpr size_t sizeOfT = sizeof(OverrideOdometry);
 
