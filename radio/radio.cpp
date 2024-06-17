@@ -15,7 +15,8 @@ void CustomRF24::preInit(rf24_pa_dbm_e pa_level) {
 }
 
 void CustomRF24::postInit() {
-    this->startListening();           // Always idle in receiving mode
+    // this->startListening();           // Always idle in receiving mode
+    this->stopListening();
 }
 
 
@@ -27,9 +28,12 @@ void CustomRF24::sendMessage(T msg) {
     //     Serial.printf("%02X ", ((uint8_t*) &msg)[i]);
     // }
     // Serial.println();
-    this->stopListening();
-    this->write(&msg, sizeof(msg));
-    this->startListening();
+    // this->stopListening();
+    bool res = this->write(&msg, sizeof(msg));
+    // if(!res) {
+    //     Serial.print("F\n");
+    // }
+    // this->startListening();
 }
 
 // Have a sendMessage() command for every message type
@@ -154,9 +158,26 @@ void CustomRF24::registerCallback<Radio::OverrideOdometry>(void (*fun)(Radio::Ov
 }
 
 bool CustomRF24::receiveAndCallback(uint8_t id) {
+    Serial.print(" RX ");
     Radio::Message msg;
     msg.mt = Radio::MessageType::None;
+    auto size = getDynamicPayloadSize();
+    // Serial.printf(" - %u - ", size);
+
     receiveMessage(msg);
+
+    // uint32_t data[8];
+    // this->read(data, 32);
+    // // if((data[0] & 0xFL) != 0) {
+    // //     Serial.print(" !!! ");
+    // //     Serial.printf(" %u ", this->getCRCLength());
+    // // }
+    // // for(uint8_t j = 0; j < 8; j++) {
+    // Serial.printf(" %02u:%02u.%03u", data[1]/60000, (data[1]/1000)%60, data[1]%1000);
+    // // }
+    // Serial.print("\n");
+    // return false;
+
     if(callback_msg != nullptr){
         callback_msg(msg, id);
     }
@@ -204,10 +225,16 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
             return true;
         case Radio::MessageType::None:
             // No message received
+            Serial.printf(" <%u> NONE\n", id);
             break;
         default:
             //Unknown message type
             // Serial.println(" Unknown message type received!");
+            uint8_t *data = (uint8_t*) &msg;
+            for(uint8_t i = 0; i < 32; i++) {
+                Serial.printf(" 0x%02X", data[i]);
+            }
+            Serial.println();
             return false;
     }
     return false;
@@ -295,7 +322,7 @@ void CustomRF24_Base::openPipes(uint8_t num_radios_online) {
 void CustomRF24_Base::setRxRobot(Radio::SSL_ID rx_robot) {
     if(rx_robot != this->rx_robot) {
         this->rx_robot = rx_robot;
-        this->openReadingPipe(0, Radio::BaseAddress_BtR + (uint64_t) this->rx_robot); // For listening to other base stations
+        // this->openReadingPipe(0, Radio::BaseAddress_BtR + (uint64_t) this->rx_robot); // For listening to other base stations
         this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
     }
 }
