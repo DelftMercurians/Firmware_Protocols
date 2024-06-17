@@ -24,8 +24,12 @@ class CustomRF24 : public RF24 {
         SPIClass* spi;
         uint8_t num_radios_online = 1;
 
+        bool sendMessage(Radio::Message msg);
+
         template<typename T>
-        void sendMessage(T msg);
+        bool sendMessage(T msgi) {
+            return this->sendMessage(Radio::Message{msgi});
+        }
 
         void preInit(rf24_pa_dbm_e pa_level);
         void postInit();
@@ -79,9 +83,9 @@ class CustomRF24_Base : public CustomRF24 {
         void setRxRobot(Radio::SSL_ID rx_robot);
 
         template<typename T>
-        void sendMessageToRobot(T msg, uint8_t rx_robot) {
+        bool sendMessageToRobot(T msg, uint8_t rx_robot) {
             this->setRxRobot(rx_robot);
-            this->sendMessage(msg);
+            return this->sendMessage(msg);
         }
 
     private:

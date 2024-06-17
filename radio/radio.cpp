@@ -21,68 +21,19 @@ void CustomRF24::postInit() {
 
 
 // Send a generic message
-template<typename T = Radio::Message>
-void CustomRF24::sendMessage(T msg) {
+bool CustomRF24::sendMessage(Radio::Message msg) {
     // Serial.print("MSG = ");
     // for(uint8_t i = 0; i < sizeof(msg); i++) {
     //     Serial.printf("%02X ", ((uint8_t*) &msg)[i]);
     // }
     // Serial.println();
     // this->stopListening();
-    bool res = this->write(&msg, sizeof(msg));
+    return this->write(&msg, sizeof(msg));
     // if(!res) {
     //     Serial.print("F\n");
     // }
     // this->startListening();
 }
-
-// Have a sendMessage() command for every message type
-// template<>
-// void CustomRF24::sendMessage<Radio::ConfigMessage>(Radio::ConfigMessage msgi) {
-//     Radio::Message msg;
-//     msg.mt = Radio::MessageType::ConfigMessage;
-//     msg.msg.cm = msgi;
-//     this->sendMessage(msg);
-// }
-template<>
-void CustomRF24::sendMessage<Radio::Command>(Radio::Command msgi) {
-    this->sendMessage(Radio::Message{msgi});
-}
-// template<>
-// void CustomRF24::sendMessage<Radio::Reply>(Radio::Reply msgi) {
-//     Radio::Message msg;
-//     msg.mt = Radio::MessageType::Reply;
-//     msg.msg.r = msgi; 
-//     this->sendMessage(msg);
-// }
-// template<>
-// void CustomRF24::sendMessage<Radio::Status>(Radio::Status msgi) {
-//     Radio::Message msg;
-//     msg.mt = Radio::MessageType::Status;
-//     msg.msg.s = msgi;
-//     this->sendMessage(msg);
-// }
-template<>
-void CustomRF24::sendMessage<Radio::PrimaryStatusHF>(Radio::PrimaryStatusHF msgi) {
-    this->sendMessage(Radio::Message{msgi});
-}
-template<>
-void CustomRF24::sendMessage<Radio::PrimaryStatusLF>(Radio::PrimaryStatusLF msgi) {
-    this->sendMessage(Radio::Message{msgi});
-}
-template<>
-void CustomRF24::sendMessage<Radio::ImuReadings>(Radio::ImuReadings msgi) {
-    this->sendMessage(Radio::Message{msgi});
-}
-template<>
-void CustomRF24::sendMessage<Radio::OdometryReading>(Radio::OdometryReading msgi) {
-    this->sendMessage(Radio::Message{msgi});
-}
-template<>
-void CustomRF24::sendMessage<Radio::OverrideOdometry>(Radio::OverrideOdometry msgi) {
-    this->sendMessage(Radio::Message{msgi});
-}
-
 
 // Receive a generic message
 void CustomRF24::receiveMessage(Radio::Message& msg) {
@@ -228,6 +179,7 @@ bool CustomRF24_Robot::init(uint8_t robot, rf24_pa_dbm_e pa_level) {
     this->openReadingPipe(1, Radio::BaseAddress_BtR + (uint64_t) identity);   // Listen on base to robot address
     this->openWritingPipe(Radio::BaseAddress_RtB + (uint64_t) identity);      // Transmit on robot to base address
     this->postInit();
+    this->startListening();           // Always idle in receiving mode
     return this->isChipConnected();
 }
 
