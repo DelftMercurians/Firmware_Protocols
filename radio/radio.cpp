@@ -104,9 +104,14 @@ void CustomRF24_Robot::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
             {
                 for(uint8_t i = 0; i < 5; i++) {
                     if(mcm.vars[i] == HG::Variable::NONE) continue;
-                    if(this->config_variables[(uint8_t) mcm.vars[i]] == nullptr) continue;
+                    if(this->config_variables[(uint8_t) mcm.vars[i]] == nullptr){
+                        mcm.vars[i] = HG::Variable::NONE; // Variable is not available
+                        continue;
+                    };
                     *this->config_variables[(uint8_t) mcm.vars[i]] = mcm.values[i];
                 }
+                mcm.operation = HG::ConfigOperation::WRITE_RETURN;
+                txQueue.push(Radio::Message{mcm});
             }
             break;
         case HG::ConfigOperation::SET_DEFAULT:
