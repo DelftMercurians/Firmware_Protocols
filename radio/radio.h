@@ -5,6 +5,7 @@
 #include <RF24.h>
 #include <radio/protocols_radio.h>
 #include <radio/pins_radio.h>
+#include <queue>
 
 class CustomRF24 : public RF24 {
     public:
@@ -20,7 +21,7 @@ class CustomRF24 : public RF24 {
 
 
     protected:
-        bool receiveAndCallback(uint8_t id);
+        
 
         uint8_t identity;
         SPIClass* spi;
@@ -68,10 +69,15 @@ class CustomRF24_Robot : public CustomRF24 {
         void writeTxBuffer(uint8_t index, Radio::Message msg);
         using CustomRF24::sendMessage;
 
+        void handleMultiConfigMessage(Radio::MultiConfigMessage);
+        bool receiveAndCallback(uint8_t id);
+
     private:
         Radio::Message txBuffer[MAX_TX_BUFFER];
         uint8_t tx_buffer_len;
         uint8_t tx_rotate;
+
+        std::queue<Radio::Message> txQueue;
 
         void writeTx();
 };
@@ -87,11 +93,14 @@ class CustomRF24_Base : public CustomRF24 {
         void openPipes(uint8_t num_radios_online);
         void setRxRobot(Radio::SSL_ID rx_robot);
 
+        void handleMultiConfigMessage(Radio::MultiConfigMessage);
+
         template<typename T>
         bool sendMessageToRobot(T msg, uint8_t rx_robot) {
             this->setRxRobot(rx_robot);
             return this->sendMessage(msg);
         }
+        bool receiveAndCallback(uint8_t id);
 
     private:
         Radio::SSL_ID rx_robot = 0;

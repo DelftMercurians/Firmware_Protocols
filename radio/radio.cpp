@@ -79,7 +79,7 @@ void CustomRF24::registerCallback<Radio::OverrideOdometry>(void (*fun)(Radio::Ov
     callback_override_odo = fun;
 }
 
-void CustomRF24::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
+void CustomRF24_Robot::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
     switch(mcm.operation) {
         case HG::ConfigOperation::READ:
             // Send back variable value
@@ -96,7 +96,7 @@ void CustomRF24::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
                     }
                     ret_message.values[i] = *this->config_variables[(uint8_t) mcm.vars[i]];
                 }
-                // send back ret_message somehow
+                txQueue.push(Radio::Message{ret_message});
             }
             break;
         case HG::ConfigOperation::WRITE:
@@ -118,7 +118,11 @@ void CustomRF24::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
     }
 }
 
-bool CustomRF24::receiveAndCallback(uint8_t id) {
+void CustomRF24_Base::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
+    return;
+}
+
+bool CustomRF24_Base::receiveAndCallback(uint8_t id) {
     Radio::Message msg;
     auto size = getDynamicPayloadSize();
     receiveMessage(msg);
@@ -130,7 +134,6 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
     switch(msg.mt) {
         case Radio::MessageType::MultiConfigMessage:
             // handle incoming multi config message
-            handleMultiConfigMessage(msg.msg.mcm);
             return true;
         case Radio::MessageType::Command:
             if(callback_command != nullptr){
@@ -232,11 +235,77 @@ void CustomRF24_Robot::writeTx() {
     // Fill TX buffer
     // this->flush_tx();
     // if(tx_buffer_len >= 1) {
-    this->writeAckPayload(1, &txBuffer[tx_rotate%tx_buffer_len], sizeof(txBuffer[0]));
-    tx_rotate++;
+    if(this->txQueue.empty()) {
+        this->writeAckPayload(1, &txBuffer[tx_rotate%tx_buffer_len], sizeof(txBuffer[0]));
+        tx_rotate++;
+    } else {
+        this->writeAckPayload(1, &this->txQueue.front(), sizeof(txBuffer[0]));
+        this->txQueue.pop();
+    }
 	//     this->writeAckPayload(1, &txBuffer[(tx_rotate + 1)%tx_buffer_len], sizeof(txBuffer[0]));
 	//     this->writeAckPayload(1, &txBuffer[(tx_rotate + 2)%tx_buffer_len], sizeof(txBuffer[0]));
     // }
+}
+
+bool CustomRF24_Robot::receiveAndCallback(uint8_t id) {
+    Radio::Message msg;
+    auto size = getDynamicPayloadSize();
+    receiveMessage(msg);
+
+    if(callback_msg != nullptr){
+        callback_msg(msg, id);
+    }
+    // TODO: can be replaced by a template
+    switch(msg.mt) {
+        case Radio::MessageType::MultiConfigMessage:
+            // handle incoming multi config message
+            handleMultiConfigMessage(msg.msg.mcm);
+            return true;
+        case Radio::MessageType::Command:
+            if(callback_command != nullptr){
+                callback_command(msg.msg.c, id);
+            }
+            return true;
+        case Radio::MessageType::PrimaryStatusHF:
+            if(callback_status_hf != nullptr){
+                callback_status_hf(msg.msg.ps_hf, id);
+            }
+            return true;
+        case Radio::MessageType::PrimaryStatusLF:
+            if(callback_status_lf != nullptr){
+                callback_status_lf(msg.msg.ps_lf, id);
+            }
+            return true;
+        case Radio::MessageType::ImuReadings:
+            if(callback_imu_readings != nullptr){
+                callback_imu_readings(msg.msg.ir, id);
+            }
+            return true;
+        case Radio::MessageType::OdometryReading:
+            if(callback_odo_reading != nullptr){
+                callback_odo_reading(msg.msg.odo, id);
+            }
+            return true;
+        case Radio::MessageType::OverrideOdometry:
+            if(callback_override_odo != nullptr){
+                callback_override_odo(msg.msg.over_odo, id);
+            }
+            return true;
+        case Radio::MessageType::None:
+            // No message received
+            // Serial.printf(" <%u> NONE\n", id);
+            break;
+        default:
+            //Unknown message type
+            // Serial.println(" Unknown message type received!");
+            // uint8_t *data = (uint8_t*) &msg;
+            // for(uint8_t i = 0; i < 32; i++) {
+            //     Serial.printf(" 0x%02X", data[i]);
+            // }
+            // Serial.println();
+            return false;
+    }
+    return false;
 }
 
 

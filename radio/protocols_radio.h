@@ -245,6 +245,13 @@ struct Message {
     {
         this->msg.ir = ir;
     }
+
+    Message(MultiConfigMessage mcm) :
+        mt{MessageType::MultiConfigMessage},
+        _pad{0, 0, 0}
+    {
+        this->msg.mcm = mcm;
+    }
 };
 // constexpr size_t sizeOfT = sizeof(OverrideOdometry);
 
