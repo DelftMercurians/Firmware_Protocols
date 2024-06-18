@@ -15,23 +15,22 @@ const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
 
 /* CONFIG MESSAGES */
-// Configuration operations
-enum class ConfigOperation {
-    NONE,                   // Don't do anything with this
-    SET_DEFAULT,            // Set a parameter to defaults
-    SET_DEFAULT_RETURN,     // Reply stating value set to defaults
-    READ = (int) CAN::ACCESS::READ,                   // Read a parameter from the robot
-    READ_RETURN = (int) CAN::ACCESS::MASK,            // Robot return message with value
-    WRITE = (int) CAN::ACCESS::WRITE,                  // Write a parameter to the robot
-    WRITE_RETURN,           // Robot return message stating new value
-};
+
 
 // Configuration message (bidirectional)
-struct ConfigMessage {
-    ConfigOperation op;         // Configuration operation
-    CAN::VARIABLE var;          // Variable/Parameter that is being accessed
-    CAN_VARIABLE_TYPE value;    // Value to be written/that is being acknowledged
+struct MultiConfigMessage {
+    HG::Variable vars[5];   // Variable/Parameter that is being accessed
+
+    HG::ConfigOperation operation;         // Configuration operation
+    HG::VariableType type;
+
+    uint8_t _pad;
+
+    uint32_t values[5];     // Value to be written/that is being acknowledged
 };
+
+
+const auto abc = sizeof(MultiConfigMessage);
 
 
 /* COMMAND MESSAGES */
@@ -164,6 +163,8 @@ enum class MessageType : uint8_t {
     OdometryReading = 0x13,     // Odometry reading
     OverrideOdometry = 0x14,    // Overwrite the odometry reading
 
+    MultiConfigMessage = 0x20,  // Multiple Configuration Accesses
+
     NoOp = 0xFF,                // No Operation
 };
 
@@ -176,6 +177,7 @@ struct Message {
         // Reply r;
         // ConfigMessage cm;
         // Status s;
+        MultiConfigMessage mcm;
         PrimaryStatusHF ps_hf; // 28 bytes
         OdometryReading odo; // 28 bytes
         OverrideOdometry over_odo; // 28 bytes

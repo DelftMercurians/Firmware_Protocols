@@ -40,9 +40,8 @@ void CustomRF24::receiveMessage(Radio::Message& msg) {
     this->read(&msg, sizeof(msg));
 }
 
-template<>
-void CustomRF24::registerCallback<Radio::ConfigMessage>(void (*fun)(Radio::ConfigMessage, Radio::SSL_ID)) {
-    callback_confmsg = fun;
+void CustomRF24::registerVariable(uint32_t *ptr, HG::Variable var) {
+    config_variables[(uint8_t) var] = ptr;
 }
 
 template<>
@@ -51,19 +50,9 @@ void CustomRF24::registerCallback<Radio::Command>(void (*fun)(Radio::Command, Ra
 }
 
 template<>
-void CustomRF24::registerCallback<Radio::Reply>(void (*fun)(Radio::Reply, Radio::SSL_ID)) {
-    callback_reply = fun;
-}
-
-template<>
 void CustomRF24::registerCallback<Radio::Message>(void (*fun)(Radio::Message, Radio::SSL_ID)) {
     callback_msg = fun;
 }
-
-// template<>
-// void CustomRF24::registerCallback<Radio::Status>(void (*fun)(Radio::Status, uint8_t)) {
-//     callback_status = fun;
-// }
 
 template<>
 void CustomRF24::registerCallback<Radio::PrimaryStatusHF>(void (*fun)(Radio::PrimaryStatusHF, uint8_t)) {
@@ -90,6 +79,45 @@ void CustomRF24::registerCallback<Radio::OverrideOdometry>(void (*fun)(Radio::Ov
     callback_override_odo = fun;
 }
 
+void CustomRF24::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
+    switch(mcm.operation) {
+        case HG::ConfigOperation::READ:
+            // Send back variable value
+            {
+                Radio::MultiConfigMessage ret_message;
+                ret_message.operation = HG::ConfigOperation::READ_RETURN;
+                ret_message.type = mcm.type;
+                for(uint8_t i = 0; i < 5; i++) {
+                    ret_message.vars[i] = mcm.vars[i];
+                    if(mcm.vars[i] == HG::Variable::NONE) continue;
+                    if(this->config_variables[(uint8_t) mcm.vars[i]] == nullptr) {
+                        ret_message.vars[i] = HG::Variable::NONE; // Variable is not available
+                        continue;
+                    }
+                    ret_message.values[i] = *this->config_variables[(uint8_t) mcm.vars[i]];
+                }
+                // send back ret_message somehow
+            }
+            break;
+        case HG::ConfigOperation::WRITE:
+            // Overwrite config value
+            {
+                for(uint8_t i = 0; i < 5; i++) {
+                    if(mcm.vars[i] == HG::Variable::NONE) continue;
+                    if(this->config_variables[(uint8_t) mcm.vars[i]] == nullptr) continue;
+                    *this->config_variables[(uint8_t) mcm.vars[i]] = mcm.values[i];
+                }
+            }
+            break;
+        case HG::ConfigOperation::SET_DEFAULT:
+            // Set a variable to its default value
+            // TODO
+            break;
+        default:
+            return;
+    }
+}
+
 bool CustomRF24::receiveAndCallback(uint8_t id) {
     Radio::Message msg;
     auto size = getDynamicPayloadSize();
@@ -100,21 +128,15 @@ bool CustomRF24::receiveAndCallback(uint8_t id) {
     }
     // TODO: can be replaced by a template
     switch(msg.mt) {
-        // case Radio::MessageType::ConfigMessage:
-        //     if(callback_confmsg != nullptr){
-        //         callback_confmsg(msg.msg.cm, id);
-        //     }
-        //     return true;
+        case Radio::MessageType::MultiConfigMessage:
+            // handle incoming multi config message
+            handleMultiConfigMessage(msg.msg.mcm);
+            return true;
         case Radio::MessageType::Command:
             if(callback_command != nullptr){
                 callback_command(msg.msg.c, id);
             }
             return true;
-        // case Radio::MessageType::Reply:
-        //     if(callback_reply != nullptr){
-        //         callback_reply(msg.msg.r, id);
-        //     }
-        //     return true;
         case Radio::MessageType::PrimaryStatusHF:
             if(callback_status_hf != nullptr){
                 callback_status_hf(msg.msg.ps_hf, id);

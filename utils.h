@@ -62,6 +62,90 @@ struct Version {
     uint8_t protocols_minor;
 };
 
+// Configuration operations (4 bits)
+enum class ConfigOperation : uint8_t {
+    NONE,                   // Don't do anything with this
+    SET_DEFAULT,            // Set a parameter to defaults
+    SET_DEFAULT_RETURN,     // Reply stating value set to defaults
+    READ,                   // Read a parameter from the robot
+    READ_RETURN,            // Robot return message with value
+    WRITE,                  // Write a parameter to the robot
+    WRITE_RETURN,           // Robot return message stating new value
+};
+
+// Configuration variable types (4 bits)
+enum class VariableType : uint8_t {
+    VOID,
+
+    U32,
+    U16,
+    U8,
+
+    F32,
+
+    I32,
+    I16,
+    I8,
+};
+
+// Robot Variables (8 bits)
+enum class Variable : uint8_t {
+    NONE,
+
+    ROBOT_ID,
+
+    MODE,
+
+    UID_0,
+    UID_1,
+    UID_2,
+
+    DIPSWITCHES,
+
+    VERSION_MAJOR,
+    VERSION_MINOR,
+    VERSION_PATCH,
+
+    PROTOCOL_VERSION_MAJOR,
+    PROTOCOL_VERSION_MINOR,
+
+    STATUS_PRIMARY,
+    STATUS_KICKER,
+    STATUS_IMU,
+    STATUS_FAN,
+    STATUS_POWER_BOARD,
+
+    PACK_L_ENABLE,
+    PACK_R_ENABLE,
+
+    PACK_L_VOLTAGE,
+    PACK_R_VOLTAGE,
+
+    DUCT_PRESSURE,
+
+    BREAKBEAM_SENSOR_OK,
+    BREAKBEAM_BALL_DETECTED,
+
+    KICKER_VOLTAGE,
+    KICKER_TEMPERATURE,
+    KICKER_MODE,
+
+    MOTION_POS_X,
+    MOTION_POS_Y,
+    MOTION_ANG_Z,
+
+    MOTION_VEL_X,
+    MOTION_VEL_Y,
+    MOTION_ANG_VEL_Z,
+    MOTION_VEL_NULL,
+
+    MOTION_ACC_X,
+    MOTION_ACC_Y,
+    MOTION_ANG_ACC_Z,
+
+
+};
+
 } // namespace HG
 
 

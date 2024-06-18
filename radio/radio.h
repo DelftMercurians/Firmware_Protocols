@@ -14,6 +14,8 @@ class CustomRF24 : public RF24 {
         template<typename T>
         void registerCallback(void (*fun)(T, Radio::SSL_ID));
 
+        void registerVariable(uint32_t *ptr, HG::Variable var);
+
         void receiveMessage(Radio::Message& msg);
 
 
@@ -34,9 +36,12 @@ class CustomRF24 : public RF24 {
         void preInit(rf24_pa_dbm_e pa_level);
         void postInit();
 
-        void (*callback_confmsg)(Radio::ConfigMessage, Radio::SSL_ID) = nullptr;
+        uint32_t* config_variables[256];
+
+        void handleMultiConfigMessage(Radio::MultiConfigMessage);
+
         void (*callback_command)(Radio::Command, Radio::SSL_ID) = nullptr;
-        void (*callback_reply)(Radio::Reply, Radio::SSL_ID) = nullptr;
+        // void (*callback_reply)(Radio::Reply, Radio::SSL_ID) = nullptr;
         // void (*callback_status)(Radio::Status, uint8_t) = nullptr;
         void (*callback_status_hf)(Radio::PrimaryStatusHF, Radio::SSL_ID) = nullptr;
         void (*callback_status_lf)(Radio::PrimaryStatusLF, Radio::SSL_ID) = nullptr;
