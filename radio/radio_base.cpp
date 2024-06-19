@@ -58,6 +58,7 @@ bool CustomRF24_Base::receiveAndCallback(Radio::SSL_ID id) {
     if(callback_msg != nullptr){
         callback_msg(msg, id);
     }
+    return true;
 }
 
 
