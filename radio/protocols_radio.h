@@ -29,9 +29,12 @@ struct MultiConfigMessage {
     uint32_t values[5];     // Value to be written/that is being acknowledged
 };
 
-
-const auto abc = sizeof(MultiConfigMessage);
-
+enum class Access : uint8_t {
+    NONE,
+    READ,
+    WRITE,
+    READWRITE,
+};
 
 /* COMMAND MESSAGES */
 // Kicker subcommands

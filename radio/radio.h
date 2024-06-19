@@ -12,17 +12,10 @@ class CustomRF24 : public RF24 {
         CustomRF24() : RF24() {};
         CustomRF24(rf24_gpio_pin_t _cepin, rf24_gpio_pin_t _cspin) : RF24(_cepin, _cspin) {};
 
-        template<typename T>
-        void registerCallback(void (*fun)(T, Radio::SSL_ID));
-
-        void registerVariable(uint32_t *ptr, HG::Variable var);
-
         void receiveMessage(Radio::Message& msg);
 
-
-    protected:
         
-
+    protected:
         uint8_t identity;
         SPIClass* spi;
         uint8_t num_radios_online = 1;
@@ -35,51 +28,90 @@ class CustomRF24 : public RF24 {
         }
 
         void preInit(rf24_pa_dbm_e pa_level);
-        void postInit();
 
-        uint32_t* config_variables[256];
-
-        void handleMultiConfigMessage(Radio::MultiConfigMessage);
-
-        void (*callback_command)(Radio::Command, Radio::SSL_ID) = nullptr;
-        // void (*callback_reply)(Radio::Reply, Radio::SSL_ID) = nullptr;
-        // void (*callback_status)(Radio::Status, uint8_t) = nullptr;
-        void (*callback_status_hf)(Radio::PrimaryStatusHF, Radio::SSL_ID) = nullptr;
-        void (*callback_status_lf)(Radio::PrimaryStatusLF, Radio::SSL_ID) = nullptr;
-        void (*callback_imu_readings)(Radio::ImuReadings, Radio::SSL_ID) = nullptr;
-        void (*callback_odo_reading)(Radio::OdometryReading, Radio::SSL_ID) = nullptr;
-        void (*callback_override_odo)(Radio::OverrideOdometry, Radio::SSL_ID) = nullptr;
-        void (*callback_msg)(Radio::Message, Radio::SSL_ID) = nullptr;
+        
 };
 
-// Note on callbacks:
-// For Robot
-//  second param is the incoming pipe number (0 to 5)
-// For Basestation
-//  second param is the robot id the transmission is from (for)
 
 const uint8_t MAX_TX_BUFFER = 5;
 class CustomRF24_Robot : public CustomRF24 {
     public:
         CustomRF24_Robot();
-        bool run();
         
         bool init(uint8_t robot, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
 
-        void writeTxBuffer(uint8_t index, Radio::Message msg);
-        using CustomRF24::sendMessage;
+        // Register a configuration variable pointer
+        template<typename T>
+        void registerVariable(T *ptr, HG::Variable var, Radio::Access access) {
+            static_assert(sizeof(T) != 0);
+            static_assert(sizeof(T) != 3);
+            static_assert(sizeof(T) < 5);
+            switch(sizeof(T)){
+                case 1: config_access_width[(uint8_t) var] = {WIDTH::B8, access}; break;
+                case 2: config_access_width[(uint8_t) var] = {WIDTH::B16, access}; break;
+                case 4: config_access_width[(uint8_t) var] = {WIDTH::B32, access}; break;
+            }
+            config_variables[(uint8_t) var] = ptr;
+            config_variables_defaults[(uint8_t) var] = (uint32_t) *ptr;
+        }
 
-        void handleMultiConfigMessage(Radio::MultiConfigMessage);
-        bool receiveAndCallback(uint8_t id);
+        // Add/overwrite something in tx buffer
+        void writeTxBuffer(uint8_t index, Radio::Message msg);
+
+        // Call in loop, handles all communications
+        bool run();
+
+        // Register message specific callbacks
+        template<typename T>
+        void registerCallback(void (*fun)(T));
 
     private:
+        
+        enum class WIDTH : uint8_t {
+            B8,
+            B16,
+            B32,
+        };
+        struct ACCESS_WIDTH {
+            WIDTH width : 4;
+            Radio::Access access : 4;
+        };
+
+
+        // Outgoing buffer (r -> b)
         Radio::Message txBuffer[MAX_TX_BUFFER];
         uint8_t tx_buffer_len;
         uint8_t tx_rotate;
 
+        // Outgoing queue (r -> b)
         std::queue<Radio::Message> txQueue;
 
+        // Receive all messages and trigger callbacks
+        bool receiveAndCallback();
+
+        // Write outgoing messages to ack packets (r -> b)
         void writeTx();
+
+        // Configuration variable handling (b -> r)
+        void handleMultiConfigMessage(Radio::MultiConfigMessage);
+        uint32_t* config_variables[256];    // Pointers to configuration variables
+        uint32_t config_variables_defaults[256];
+        ACCESS_WIDTH config_access_width[256];
+
+        template<typename T>
+        T* config_variables_ptr(HG::Variable var) {
+            return (T*) this->config_variables[(uint8_t) var];
+        }
+
+        // Callbacks for different message types
+        void (*callback_command)(Radio::Command) = nullptr;
+        void (*callback_status_hf)(Radio::PrimaryStatusHF) = nullptr;
+        void (*callback_status_lf)(Radio::PrimaryStatusLF) = nullptr;
+        void (*callback_imu_readings)(Radio::ImuReadings) = nullptr;
+        void (*callback_odo_reading)(Radio::OdometryReading) = nullptr;
+        void (*callback_override_odo)(Radio::OverrideOdometry) = nullptr;
+
+        void (*callback_msg)(Radio::Message) = nullptr;
 };
 
 class CustomRF24_Base : public CustomRF24 {
@@ -100,10 +132,18 @@ class CustomRF24_Base : public CustomRF24 {
             this->setRxRobot(rx_robot);
             return this->sendMessage(msg);
         }
-        bool receiveAndCallback(uint8_t id);
+
+        // Register message callback
+        void registerCallback(void (*fun)(Radio::Message, Radio::SSL_ID));
+
 
     private:
         Radio::SSL_ID rx_robot = 0;
         Radio::SSL_ID getID(uint8_t pipe);
         uint8_t getPipe(Radio::SSL_ID id);
+
+        bool receiveAndCallback(uint8_t id);
+
+        void (*callback_msg)(Radio::Message, Radio::SSL_ID) = nullptr;
+
 };
