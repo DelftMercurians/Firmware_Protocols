@@ -22,7 +22,7 @@ struct MultiConfigMessage {
     HG::Variable vars[5];   // Variable/Parameter that is being accessed
 
     HG::ConfigOperation operation;         // Configuration operation
-    HG::VariableType type;
+    HG::VariableType type;  // not used...
 
     uint8_t _pad;
 

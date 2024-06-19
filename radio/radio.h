@@ -47,12 +47,21 @@ class CustomRF24_Robot : public CustomRF24 {
             static_assert(sizeof(T) != 3);
             static_assert(sizeof(T) < 5);
             switch(sizeof(T)){
-                case 1: config_access_width[(uint8_t) var] = {WIDTH::B8, access}; break;
-                case 2: config_access_width[(uint8_t) var] = {WIDTH::B16, access}; break;
-                case 4: config_access_width[(uint8_t) var] = {WIDTH::B32, access}; break;
+                case 1:
+                    config_access_width[(uint8_t) var] = ACCESS_WIDTH{WIDTH::B8, access};
+                    *((uint8_t*) &config_variables_defaults[(uint8_t) var]) = *((uint8_t*) ptr);
+                    break;
+                case 2:
+                    config_access_width[(uint8_t) var] = ACCESS_WIDTH{WIDTH::B16, access};
+                    *((uint16_t*) &config_variables_defaults[(uint8_t) var]) = *((uint16_t*) ptr);
+                    break;
+                case 4:
+                    config_access_width[(uint8_t) var] = ACCESS_WIDTH{WIDTH::B32, access};
+                    *((uint32_t*) &config_variables_defaults[(uint8_t) var]) = *((uint32_t*) ptr);
+                    break;
             }
-            config_variables[(uint8_t) var] = ptr;
-            config_variables_defaults[(uint8_t) var] = (uint32_t) *ptr;
+            config_variables[(uint8_t) var] = (uint32_t*) ptr;
+            
         }
 
         // Add/overwrite something in tx buffer

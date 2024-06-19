@@ -44,6 +44,7 @@ void CustomRF24_Robot::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
                         case Radio::Access::READWRITE:
                             break;
                     }
+                    mcm.values[i] = 0;
                     switch(this->config_access_width[(uint8_t) mcm.vars[i]].width) {
                         case WIDTH::B8:
                             *((uint8_t*) &mcm.values[i]) = *config_variables_ptr<uint8_t>(mcm.vars[i]);
@@ -81,12 +82,18 @@ void CustomRF24_Robot::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
                     switch(this->config_access_width[(uint8_t) mcm.vars[i]].width) {
                         case WIDTH::B8:
                             *config_variables_ptr<uint8_t>(mcm.vars[i]) = *((uint8_t*) &mcm.values[i]);
+                            mcm.values[i] = 0;
+                            *((uint8_t*) &mcm.values[i]) = *config_variables_ptr<uint8_t>(mcm.vars[i]);
                             break;
                         case WIDTH::B16:
                             *config_variables_ptr<uint16_t>(mcm.vars[i]) = *((uint16_t*) &mcm.values[i]);
+                            mcm.values[i] = 0;
+                            *((uint16_t*) &mcm.values[i]) = *config_variables_ptr<uint16_t>(mcm.vars[i]);
                             break;
                         case WIDTH::B32:
                             *config_variables_ptr<uint32_t>(mcm.vars[i]) = *((uint32_t*) &mcm.values[i]);
+                            mcm.values[i] = 0;
+                            *((uint32_t*) &mcm.values[i]) = *config_variables_ptr<uint32_t>(mcm.vars[i]);
                             break;
                     }
                 }
@@ -112,15 +119,18 @@ void CustomRF24_Robot::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
                         case Radio::Access::READWRITE:
                             break;
                     }
-                    *config_variables_ptr<uint32_t>(mcm.vars[i]) = config_variables_defaults[(uint8_t) mcm.vars[i]];
+                    mcm.values[i] = 0;
                     switch(this->config_access_width[(uint8_t) mcm.vars[i]].width) {
                         case WIDTH::B8:
+                            *config_variables_ptr<uint8_t>(mcm.vars[i]) = *((uint8_t*) &config_variables_defaults[(uint8_t) mcm.vars[i]]);
                             *((uint8_t*) &mcm.values[i]) = *config_variables_ptr<uint8_t>(mcm.vars[i]);
                             break;
                         case WIDTH::B16:
+                            *config_variables_ptr<uint16_t>(mcm.vars[i]) = *((uint16_t*) &config_variables_defaults[(uint8_t) mcm.vars[i]]);
                             *((uint16_t*) &mcm.values[i]) = *config_variables_ptr<uint16_t>(mcm.vars[i]);
                             break;
                         case WIDTH::B32:
+                            *config_variables_ptr<uint32_t>(mcm.vars[i]) = *((uint32_t*) &config_variables_defaults[(uint8_t) mcm.vars[i]]);
                             *((uint32_t*) &mcm.values[i]) = *config_variables_ptr<uint32_t>(mcm.vars[i]);
                             break;
                     }
