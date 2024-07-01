@@ -1,4 +1,5 @@
 #pragma once
+#pragma GCC system_header // Silence unnamed warnings
 
 #include <SPI.h>
 #include <nRF24L01.h>
