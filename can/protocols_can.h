@@ -49,9 +49,15 @@ enum class VARIABLE {
     PACK_R_VOLTAGE = 0x06,  // Right battery pack voltage <float>
     PACK_EN = 0x07,         // Battery pack enable <HG::PackEnable>
     FAN_SPEED = 0x08,       // Fan speed percentage (0 = off, <50 = low, >50 = high)
+    STATUS_POWER_BOARD = 0x09,  // <HG::Status>
 
     COMMAND = 0x0A,
     ENCODER = 0x0B,
+
+    STATUS_KICKER = 0x0C,   // <HG::Status>
+    KICKER_CAP_VOLTAGE = 0x0D,  // Check the capacitor voltage <float>
+    KICK_TRIGGER_SPEED = 0x0E,  // Trigger a kick of a specific speed <float> (m/s)
+    CHIP_TRIGGER_SPEED = 0x0F,  // Trigger a chip of a specific speed <float> (m/s)
     
     POSITION = 0x10,
     SPEED = 0x11,
