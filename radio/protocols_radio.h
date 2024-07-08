@@ -50,6 +50,7 @@ enum class KickerCommand : uint8_t {
     CHIP,       // Chip the ball
 
     POWER_BOARD_OFF,    // Switch the power board off, shouldn't happen here, but what can I say
+    REBOOT,     // Reboot mainboard
 };
 
 // Command from mothership to robot (28 bytes)
