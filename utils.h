@@ -34,6 +34,8 @@ enum class Status : uint8_t {
     NOT_INSTALLED,  // This submodule is not installed/implemented
 
     STANDBY,        // Submodule is inactive, but ready to go
+
+    READY,          // Kicker is charged and ready to fire
 };
 
 // Kicker status message
@@ -158,7 +160,7 @@ enum class DEVICE_ID : uint8_t {
 
     PRIMARY = 0x6,     // Main device on bus, coordinates all other devices
 
-    POWER_BOARD = 0x7, // Power board, responsible for system on/off and fan
+    AUXILIARY = 0x7, // Power board and solenoid driver boards (shared ID)
 
     DRIVER_0 = 0x1,    // Motor driver 0 (Wheel motor)
     DRIVER_1 = 0x2,    // Motor driver 1 (Wheel motor)

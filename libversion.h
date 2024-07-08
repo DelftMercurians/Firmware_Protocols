@@ -1,3 +1,4 @@
+#pragma once
 
 #ifndef STRINGIFY
   #define STRINGIFY(x) #x
