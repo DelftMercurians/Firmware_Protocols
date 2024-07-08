@@ -105,8 +105,8 @@ struct PrimaryStatusLF {
     uint8_t pack_voltages[2];
     uint8_t motor_driver_temps[5];
     uint8_t cap_voltage;
-    uint8_t kicker_temp;
 
+    HG::Status power_board_status;
     HG::Status primary_status;
     HG::Status kicker_status;
     HG::Status fan_status;
