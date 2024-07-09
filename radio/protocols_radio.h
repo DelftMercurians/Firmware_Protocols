@@ -11,8 +11,11 @@ namespace Radio {
 
 typedef uint8_t SSL_ID;
 
+const SSL_ID Broadcast_ID = 0xEE;
+
 const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
+const uint64_t BroadcastAddress = 0x3248F7LL;   // Address base to all robots
 
 /* CONFIG MESSAGES */
 

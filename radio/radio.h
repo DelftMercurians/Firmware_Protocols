@@ -21,11 +21,11 @@ class CustomRF24 : public RF24 {
         SPIClass* spi;
         uint8_t num_radios_online = 1;
 
-        bool sendMessage(Radio::Message msg);
+        bool sendMessage(Radio::Message msg, bool multicast = false);
 
         template<typename T>
-        bool sendMessage(T msgi) {
-            return this->sendMessage(Radio::Message{msgi});
+        bool sendMessage(T msgi, bool multicast = false) {
+            return this->sendMessage(Radio::Message{msgi}, multicast);
         }
 
         void preInit(rf24_pa_dbm_e pa_level);
@@ -134,6 +134,7 @@ class CustomRF24_Base : public CustomRF24 {
         bool init(rf24_pa_dbm_e pa_level = RF24_PA_MIN);
         void openPipes(uint8_t num_radios_online);
         void setRxRobot(Radio::SSL_ID rx_robot);
+        void setRxBroadcast();
 
         void handleMultiConfigMessage(Radio::MultiConfigMessage);
 
@@ -141,6 +142,12 @@ class CustomRF24_Base : public CustomRF24 {
         bool sendMessageToRobot(T msg, uint8_t rx_robot) {
             this->setRxRobot(rx_robot);
             return this->sendMessage(msg);
+        }
+
+        template<typename T>
+        bool sendMessageBroadcast(T msg) {
+            this->setRxBroadcast();
+            return this->sendMessage(msg, true);
         }
 
         // Register message callback

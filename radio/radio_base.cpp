@@ -65,8 +65,14 @@ bool CustomRF24_Base::receiveAndCallback(Radio::SSL_ID id) {
 void CustomRF24_Base::setRxRobot(Radio::SSL_ID rx_robot) {
     if(rx_robot != this->rx_robot) {
         this->rx_robot = rx_robot;
-        // this->openReadingPipe(0, Radio::BaseAddress_BtR + (uint64_t) this->rx_robot); // For listening to other base stations
         this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
+    }
+}
+
+void CustomRF24_Base::setRxBroadcast() {
+    if(0xEE != this->rx_robot) {
+        this->rx_robot = 0xEE;
+        this->openWritingPipe(Radio::BroadcastAddress);
     }
 }
 
