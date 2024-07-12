@@ -40,8 +40,8 @@ enum class Access : uint8_t {
 };
 
 /* COMMAND MESSAGES */
-// Kicker subcommands
-enum class KickerCommand : uint8_t {
+// Robot commands
+enum class RobotCommand : uint8_t {
     NONE,
 
     ARM,        // Arm the high voltage circuitry
@@ -54,6 +54,10 @@ enum class KickerCommand : uint8_t {
 
     POWER_BOARD_OFF,    // Switch the power board off, shouldn't happen here, but what can I say
     REBOOT,     // Reboot mainboard
+
+    BEEP,   // Make a beep noise
+
+    COAST,  // Coast all the motors
 };
 
 // Command from mothership to robot (28 bytes)
@@ -63,7 +67,7 @@ struct Command {
 
     float dribbler_speed;           // Desired dribbler speed (4 bytes)
 
-    KickerCommand kicker_command;   // Command for the kicker (1 byte)
+    RobotCommand robot_command;   // Command for the robot (1 byte)
 
     uint8_t _pad[3];    // Explicit padding for bindgen (3 bytes)
 
