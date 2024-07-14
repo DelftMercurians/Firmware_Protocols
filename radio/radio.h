@@ -39,7 +39,7 @@ class CustomRF24_Robot : public CustomRF24 {
     public:
         CustomRF24_Robot();
         
-        bool init(uint8_t robot, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
+        bool init(uint8_t robot, uint8_t channel, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
 
         // Register a configuration variable pointer
         template<typename T>

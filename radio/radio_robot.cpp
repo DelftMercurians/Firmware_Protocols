@@ -15,12 +15,13 @@ CustomRF24_Robot::CustomRF24_Robot()
 }
 
 
-bool CustomRF24_Robot::init(uint8_t robot, rf24_pa_dbm_e pa_level) {
+bool CustomRF24_Robot::init(uint8_t robot, uint8_t channel, rf24_pa_dbm_e pa_level) {
     this->identity = robot;
     this->preInit(pa_level);
     this->openReadingPipe(1, Radio::BaseAddress_BtR + (uint64_t) identity);   // Listen on base to robot address
     this->openReadingPipe(2, Radio::BroadcastAddress);   // Listen on broadcast address
     this->setAutoAck(2, false); // Disable auto-ack, so it can receive multicast
+    this->setChannel(channel);
     this->openWritingPipe(Radio::BaseAddress_RtB + (uint64_t) identity);      // Transmit on robot to base address
     this->startListening();           // Always idle in receiving mode
     return this->isChipConnected();
