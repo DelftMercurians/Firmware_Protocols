@@ -10,7 +10,6 @@ void CustomRF24::preInit(rf24_pa_dbm_e pa_level) {
 	Serial.printf("isPVariant: %s\n", this->isPVariant() ? "true" : "false");
     // this->setPayloadSize(sizeof(Radio::Message));
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
-    this->setChannel(76);
     this->enableDynamicPayloads();
     this->enableAckPayload();
 }
@@ -24,7 +23,9 @@ bool CustomRF24::sendMessage(Radio::Message msg, bool multicast) {
     // }
     // Serial.println();
     // this->stopListening();
-    return this->write(&msg, sizeof(msg), multicast);
+    this->startFastWrite(&msg, sizeof(msg), multicast);
+    return true;
+    // return this->write(&msg, sizeof(msg), multicast);
     // if(!res) {
     //     Serial.print("F\n");
     // }
