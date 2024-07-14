@@ -186,6 +186,7 @@ void CustomRF24_Robot::writeTx() {
     // }
 }
 
+// return true only on commands
 bool CustomRF24_Robot::receiveAndCallback() {
     Radio::Message msg;
     auto size = getDynamicPayloadSize();
@@ -199,7 +200,7 @@ bool CustomRF24_Robot::receiveAndCallback() {
         case Radio::MessageType::MultiConfigMessage:
             // handle incoming multi config message
             handleMultiConfigMessage(msg.msg.mcm);
-            return true;
+            return false;
         case Radio::MessageType::Command:
             if(callback_command != nullptr){
                 callback_command(msg.msg.c);
@@ -209,27 +210,27 @@ bool CustomRF24_Robot::receiveAndCallback() {
             if(callback_status_hf != nullptr){
                 callback_status_hf(msg.msg.ps_hf);
             }
-            return true;
+            return false;
         case Radio::MessageType::PrimaryStatusLF:
             if(callback_status_lf != nullptr){
                 callback_status_lf(msg.msg.ps_lf);
             }
-            return true;
+            return false;
         case Radio::MessageType::ImuReadings:
             if(callback_imu_readings != nullptr){
                 callback_imu_readings(msg.msg.ir);
             }
-            return true;
+            return false;
         case Radio::MessageType::OdometryReading:
             if(callback_odo_reading != nullptr){
                 callback_odo_reading(msg.msg.odo);
             }
-            return true;
+            return false;
         case Radio::MessageType::OverrideOdometry:
             if(callback_override_odo != nullptr){
                 callback_override_odo(msg.msg.over_odo);
             }
-            return true;
+            return false;
         case Radio::MessageType::None:
             // No message received
             // Serial.printf(" <%u> NONE\n", id);
