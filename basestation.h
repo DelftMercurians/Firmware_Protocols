@@ -14,6 +14,7 @@ struct Information {
     uint8_t num_radios;
     uint8_t max_robots;
     uint16_t radios_online;  // bitfield
+    uint8_t channel;
 };
 
 }; // namespace Base
