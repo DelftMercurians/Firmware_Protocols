@@ -145,6 +145,7 @@ enum class Variable : uint8_t {
     MOTION_ACC_Y,
     MOTION_ANG_ACC_Z,
 
+    RADIO_CHANNEL,
 
 };
 
