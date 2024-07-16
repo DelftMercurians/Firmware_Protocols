@@ -59,6 +59,8 @@ enum class RobotCommand : uint8_t {
     BEEP,   // Make a beep noise
 
     COAST,  // Coast all the motors
+
+    HEADING_CONTROL,    // Z command is heading angle
 };
 
 // Command from mothership to robot (28 bytes)
