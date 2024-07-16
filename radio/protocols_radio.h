@@ -60,7 +60,8 @@ enum class RobotCommand : uint8_t {
 
     COAST,  // Coast all the motors
 
-    HEADING_CONTROL,    // Z command is heading angle
+    HEADING_CONTROL,    // Z command is heading angle (rad)
+    YAW_RATE_CONTROL,   // Z command is yaw rate (rad/s)
 };
 
 // Command from mothership to robot (28 bytes)
