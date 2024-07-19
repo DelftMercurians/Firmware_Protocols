@@ -20,7 +20,8 @@ void CustomRF24_Base::setRadioID(uint8_t identity) {
 
 bool CustomRF24_Base::init(rf24_pa_dbm_e pa_level) {
     this->preInit(pa_level);
-    this->stopListening();           // Always idle in transmitting mode
+    this->startListening();           // Always idle in listening mode
+    this->setAutoAck(false);
     return this->isChipConnected();
 }
 
@@ -30,11 +31,11 @@ bool CustomRF24_Base::run() {
         // No message received
         return false;
     }
-    if(pipe == 0) {
-        return receiveAndCallback(this->rx_robot);  // Received on basestation backlistening pipe
-    } else {
-        return receiveAndCallback(Radio::getRobotID(pipe, identity, num_radios_online));
-    }
+    // if(pipe == 0) {
+        return receiveAndCallback(pipe + 1);  // Received on basestation backlistening pipe
+    // } else {
+    //     return receiveAndCallback(Radio::getRobotID(pipe, identity, num_radios_online));
+    // }
 }
 
 void CustomRF24_Base::registerCallback(void (*fun)(Radio::Message, Radio::SSL_ID)){
@@ -43,10 +44,10 @@ void CustomRF24_Base::registerCallback(void (*fun)(Radio::Message, Radio::SSL_ID
 
 void CustomRF24_Base::openPipes(uint8_t num_radios_online) {
     this->num_radios_online = num_radios_online;
-    this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
+    // this->openWritingPipe(Radio::BaseAddress_BtR + (uint64_t) this->rx_robot);
     // Open all five reading pipes (one for each robot)
-    for (uint8_t pipe = 1; pipe <= 5; pipe++) {
-        this->openReadingPipe(pipe, Radio::BaseAddress_RtB + getID(pipe));
+    for (uint8_t pipe = 0; pipe <= 5; pipe++) {
+        this->openReadingPipe(pipe, Radio::BaseAddress_BtR + pipe + 1);
     }
 }
 
