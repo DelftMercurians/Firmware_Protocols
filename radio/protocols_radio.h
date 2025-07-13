@@ -62,6 +62,13 @@ enum class RobotCommand : uint8_t {
 
     HEADING_CONTROL,    // Z command is heading angle (rad)
     YAW_RATE_CONTROL,   // Z command is yaw rate (rad/s)
+
+
+    ARM_COUNTER_KICK,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do kick)
+    ARM_COUNTER_CHIP,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip)
+
+    ARM_TIMED_KICK,     // Arm the high voltage circuitry, set countdown time until kick
+    ARM_TIMED_CHIP,     // Arm the high voltage circuitry, set countdown time until chip
 };
 
 // Command from mothership to robot (28 bytes)
@@ -78,6 +85,24 @@ struct Command {
     float kick_time;                // How long to kick for (if kick is requested) (4 bytes)
 
     float fan_speed;                // Downforce fan speed (percentage) (4 bytes)
+};
+
+struct GlobalCommand {
+    float global_speed_x;       // Global X speed [m/s] (facing towards heading = 0)
+    float global_speed_y;       // Global Y speed [m/s] (facing towards heading = pi/2)
+
+    float heading_last_measurement; // Last vision estimate of robot heading, can be nan [rad]
+    float heading_setpoint;         // Where we want the robot to face [rad]
+
+    int16_t dribbler_speed_i;           // Desired dribbler speed (2 bytes) [rad/s]
+    uint16_t kick_time_i;                // Kick time (2 bytes) [ms]
+
+    RobotCommand robot_command;   // Command for the robot (1 byte)
+
+    uint8_t smart_kick_couter;  // For kicking more reliably (1 byte)
+    uint16_t time_to_kick;  // For curved kicking (2 bytes)
+
+    uint32_t _pad2;    // Explicit padding for bindgen (4 bytes)
 };
 
 
@@ -177,6 +202,7 @@ enum class MessageType : uint8_t {
     ImuReadings = 0x12,        // IMU readings message
     OdometryReading = 0x13,     // Odometry reading
     OverrideOdometry = 0x14,    // Overwrite the odometry reading
+    GlobalCommand = 0x15,       // Global coordinate control
 
     MultiConfigMessage = 0x20,  // Multiple Configuration Accesses
 
@@ -189,6 +215,7 @@ struct Message {
     uint8_t _pad[3];    // Explicit padding (3 bytes)
     union {
         Command c;  // 28 bytes
+        GlobalCommand gc;  // 28 bytes
         // Reply r;
         // ConfigMessage cm;
         // Status s;

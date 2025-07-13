@@ -206,6 +206,11 @@ bool CustomRF24_Robot::receiveAndCallback() {
                 callback_command(msg.msg.c);
             }
             return true;
+        case Radio::MessageType::GlobalCommand:
+            if(callback_gcommand != nullptr){
+                callback_gcommand(msg.msg.gc);
+            }
+            return true;
         case Radio::MessageType::PrimaryStatusHF:
             if(callback_status_hf != nullptr){
                 callback_status_hf(msg.msg.ps_hf);
@@ -253,6 +258,11 @@ bool CustomRF24_Robot::receiveAndCallback() {
 template<>
 void CustomRF24_Robot::registerCallback<Radio::Command>(void (*fun)(Radio::Command)) {
     callback_command = fun;
+}
+
+template<>
+void CustomRF24_Robot::registerCallback<Radio::GlobalCommand>(void (*fun)(Radio::GlobalCommand)) {
+    callback_gcommand = fun;
 }
 
 template<>

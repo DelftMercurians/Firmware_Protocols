@@ -120,6 +120,7 @@ class CustomRF24_Robot : public CustomRF24 {
         void (*callback_imu_readings)(Radio::ImuReadings) = nullptr;
         void (*callback_odo_reading)(Radio::OdometryReading) = nullptr;
         void (*callback_override_odo)(Radio::OverrideOdometry) = nullptr;
+        void (*callback_gcommand)(Radio::GlobalCommand) = nullptr;
 
         void (*callback_msg)(Radio::Message) = nullptr;
 };
