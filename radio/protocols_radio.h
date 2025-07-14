@@ -102,7 +102,10 @@ struct GlobalCommand {
     uint8_t smart_kick_couter;  // For kicking more reliably (1 byte)
     uint16_t time_to_kick;  // For curved kicking (2 bytes)
 
-    uint32_t _pad2;    // Explicit padding for bindgen (4 bytes)
+    uint16_t max_yaw_rate;  // Maximum yaw rate for yaw controller, [1/10 rad/s]
+    int8_t preferred_rotation_direction;    // Direction to turn in (+1, 0, -1)
+
+    uint8_t _pad2;    // Explicit padding for bindgen (1 bytes)
 };
 
 
