@@ -132,7 +132,8 @@ struct Status {
 // High frequency primary mcu status (28 bytes)
 struct PrimaryStatusHF {
     uint16_t pressure;              // (2 bytes)
-    uint8_t _pad0[2];    // Explicit padding (2 bytes)
+    uint8_t smart_kick_counter_return;  // (1 byte) number of the kick that was ok or not
+    uint8_t last_kick_ok;           // (1 byte), 0 if kick not ok, 1 or higher if kick ok
     float motor_speeds[5];          // (20 bytes)
     bool breakbeam_ball_detected;   // (1 byte)
     bool breakbeam_sensor_ok;       // (1 byte)
