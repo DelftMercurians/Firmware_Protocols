@@ -53,6 +53,7 @@ enum class VARIABLE {
 
     COMMAND = 0x0A,
     ENCODER = 0x0B,
+    CURRENT = 0x0C,
 
     STATUS_KICKER = 0x0C,   // <HG::Status>
     KICKER_CAP_VOLTAGE = 0x0D,  // Check the capacitor voltage <float>
@@ -145,6 +146,14 @@ struct EncoderFeedback {
 static_assert(sizeof(EncoderFeedback) <= 8, "EncoderFeedback exceeds maximum size");
 // *******
 
+// Motor current message
+struct CurrentFeedback {
+    DEVICE_ID txId;     // transmitting device
+    float current;        // measured current
+};
+static_assert(sizeof(CurrentFeedback) <= 8, "CurrentFeedback exceeds maximum size");
+// *******
+
 
 // Type of variable access
 enum class ACCESS {
@@ -188,6 +197,7 @@ enum class MESSAGE_ID {
 
     STATUS = CAN_GENERATE_MESSAGE_ID_(VARIABLE::STATUS, ACCESS::MASK),
     ENCODER = CAN_GENERATE_MESSAGE_ID_(VARIABLE::ENCODER, ACCESS::MASK),
+    CURRENT = CAN_GENERATE_MESSAGE_ID_(VARIABLE::CURRENT, ACCESS::MASK),
     
 };
 
