@@ -123,7 +123,8 @@ static_assert(sizeof(COMMAND) <= 8, "COMMAND exceeds maximum size");
 
 // Motor Status message
 const float CAN_SCALE_TEMP = (200.0/INT8_MAX);
-const float CAN_SCALE_BATV = (50.0/INT8_MAX);
+// const float CAN_SCALE_BATV = (50.0/INT8_MAX);
+const float CAN_SCALE_BATV = 0.1;
 struct MotorStatus {
     HG::Status status;
     int8_t temp;

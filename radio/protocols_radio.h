@@ -11,32 +11,38 @@ namespace Radio {
 
 typedef uint8_t SSL_ID;
 
+const SSL_ID Broadcast_ID = 0xEE;
+const SSL_ID BaseStation_ID = 0xB0;
+
 const uint64_t BaseAddress_BtR = 0x324867LL;    // Address base to robot
 const uint64_t BaseAddress_RtB = 0x4248A7LL;    // Address robot to bases (LSB must be different enough for uniqueness to kick in)
+const uint64_t BroadcastAddress = 0x3248F7LL;   // Address base to all robots
 
 /* CONFIG MESSAGES */
-// Configuration operations
-enum class ConfigOperation {
-    NONE,                   // Don't do anything with this
-    SET_DEFAULT,            // Set a parameter to defaults
-    SET_DEFAULT_RETURN,     // Reply stating value set to defaults
-    READ = (int) CAN::ACCESS::READ,                   // Read a parameter from the robot
-    READ_RETURN = (int) CAN::ACCESS::MASK,            // Robot return message with value
-    WRITE = (int) CAN::ACCESS::WRITE,                  // Write a parameter to the robot
-    WRITE_RETURN,           // Robot return message stating new value
-};
+
 
 // Configuration message (bidirectional)
-struct ConfigMessage {
-    ConfigOperation op;         // Configuration operation
-    CAN::VARIABLE var;          // Variable/Parameter that is being accessed
-    CAN_VARIABLE_TYPE value;    // Value to be written/that is being acknowledged
+struct MultiConfigMessage {
+    HG::Variable vars[5];   // Variable/Parameter that is being accessed
+
+    HG::ConfigOperation operation;         // Configuration operation
+    HG::VariableType type;  // not used...
+
+    uint8_t _pad;
+
+    uint32_t values[5];     // Value to be written/that is being acknowledged
 };
 
+enum class Access : uint8_t {
+    NONE,
+    READ,
+    WRITE,
+    READWRITE,
+};
 
 /* COMMAND MESSAGES */
-// Kicker subcommands
-enum class KickerCommand : uint8_t {
+// Robot commands
+enum class RobotCommand : uint8_t {
     NONE,
 
     ARM,        // Arm the high voltage circuitry
@@ -48,6 +54,21 @@ enum class KickerCommand : uint8_t {
     CHIP,       // Chip the ball
 
     POWER_BOARD_OFF,    // Switch the power board off, shouldn't happen here, but what can I say
+    REBOOT,     // Reboot mainboard
+
+    BEEP,   // Make a beep noise
+
+    COAST,  // Coast all the motors
+
+    HEADING_CONTROL,    // Z command is heading angle (rad)
+    YAW_RATE_CONTROL,   // Z command is yaw rate (rad/s)
+
+
+    ARM_COUNTER_KICK,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do kick)
+    ARM_COUNTER_CHIP,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip)
+
+    ARM_TIMED_KICK,     // Arm the high voltage circuitry, set countdown time until kick
+    ARM_TIMED_CHIP,     // Arm the high voltage circuitry, set countdown time until chip
 };
 
 // Command from mothership to robot (28 bytes)
@@ -57,13 +78,34 @@ struct Command {
 
     float dribbler_speed;           // Desired dribbler speed (4 bytes)
 
-    KickerCommand kicker_command;   // Command for the kicker (1 byte)
+    RobotCommand robot_command;   // Command for the robot (1 byte)
 
     uint8_t _pad[3];    // Explicit padding for bindgen (3 bytes)
 
     float kick_time;                // How long to kick for (if kick is requested) (4 bytes)
 
     float fan_speed;                // Downforce fan speed (percentage) (4 bytes)
+};
+
+struct GlobalCommand {
+    float global_speed_x;       // Global X speed [m/s] (facing towards heading = 0)
+    float global_speed_y;       // Global Y speed [m/s] (facing towards heading = pi/2)
+
+    float heading_last_measurement; // Last vision estimate of robot heading, can be nan [rad]
+    float heading_setpoint;         // Where we want the robot to face [rad]
+
+    int16_t dribbler_speed_i;           // Desired dribbler speed (2 bytes) [rad/s]
+    uint16_t kick_time_i;                // Kick time (2 bytes) [ms]
+
+    RobotCommand robot_command;   // Command for the robot (1 byte)
+
+    uint8_t smart_kick_couter;  // For kicking more reliably (1 byte)
+    uint16_t time_to_kick;  // For curved kicking (2 bytes)
+
+    uint16_t max_yaw_rate;  // Maximum yaw rate for yaw controller, [1/10 rad/s]
+    int8_t preferred_rotation_direction;    // Direction to turn in (+1, 0, -1)
+
+    uint8_t _pad2;    // Explicit padding for bindgen (1 bytes)
 };
 
 
@@ -90,7 +132,8 @@ struct Status {
 // High frequency primary mcu status (28 bytes)
 struct PrimaryStatusHF {
     uint16_t pressure;              // (2 bytes)
-    uint8_t _pad0[2];    // Explicit padding (2 bytes)
+    uint8_t smart_kick_counter_return;  // (1 byte) number of the kick that was ok or not
+    uint8_t last_kick_ok;           // (1 byte), 0 if kick not ok, 1 or higher if kick ok
     float motor_speeds[5];          // (20 bytes)
     bool breakbeam_ball_detected;   // (1 byte)
     bool breakbeam_sensor_ok;       // (1 byte)
@@ -102,8 +145,8 @@ struct PrimaryStatusLF {
     uint8_t pack_voltages[2];
     uint8_t motor_driver_temps[5];
     uint8_t cap_voltage;
-    uint8_t kicker_temp;
 
+    HG::Status power_board_status;
     HG::Status primary_status;
     HG::Status kicker_status;
     HG::Status fan_status;
@@ -163,6 +206,11 @@ enum class MessageType : uint8_t {
     ImuReadings = 0x12,        // IMU readings message
     OdometryReading = 0x13,     // Odometry reading
     OverrideOdometry = 0x14,    // Overwrite the odometry reading
+    GlobalCommand = 0x15,       // Global coordinate control
+
+    MultiConfigMessage = 0x20,  // Multiple Configuration Accesses
+
+    NoOp = 0xFF,                // No Operation
 };
 
 // A structure that can hold messages of any type (32 bytes)
@@ -171,9 +219,11 @@ struct Message {
     uint8_t _pad[3];    // Explicit padding (3 bytes)
     union {
         Command c;  // 28 bytes
+        GlobalCommand gc;  // 28 bytes
         // Reply r;
         // ConfigMessage cm;
         // Status s;
+        MultiConfigMessage mcm;
         PrimaryStatusHF ps_hf; // 28 bytes
         OdometryReading odo; // 28 bytes
         OverrideOdometry over_odo; // 28 bytes
@@ -186,6 +236,68 @@ struct Message {
             uint8_t _pad1[4];
         };
     } msg;                      // The message contents
+
+    Message() :
+        mt{MessageType::None},
+        _pad{0, 0, 0}
+    {
+
+    }
+
+    static Message NOOP() {
+        Message msg;
+        msg.mt = MessageType::NoOp;
+        return msg;
+    }
+
+    Message(Command c) :
+        mt{MessageType::Command},
+        _pad{0, 0, 0}
+    {
+        this->msg.c = c;
+    }
+
+    Message(OverrideOdometry over_odo) :
+        mt{MessageType::OverrideOdometry},
+        _pad{0, 0, 0}
+    {
+        this->msg.over_odo = over_odo;
+    }
+
+    Message(OdometryReading odo) :
+        mt{MessageType::OdometryReading},
+        _pad{0, 0, 0}
+    {
+        this->msg.odo = odo;
+    }
+
+    Message(PrimaryStatusLF ps_lf) :
+        mt{MessageType::PrimaryStatusLF},
+        _pad{0, 0, 0}
+    {
+        this->msg.ps_lf = ps_lf;
+    }
+
+    Message(PrimaryStatusHF ps_hf) :
+        mt{MessageType::PrimaryStatusHF},
+        _pad{0, 0, 0}
+    {
+        this->msg.ps_hf = ps_hf;
+    }
+
+    Message(ImuReadings ir) :
+        mt{MessageType::ImuReadings},
+        _pad{0, 0, 0}
+    {
+        this->msg.ir = ir;
+    }
+
+    Message(MultiConfigMessage mcm) :
+        mt{MessageType::MultiConfigMessage},
+        _pad{0, 0, 0}
+    {
+        this->msg.mcm = mcm;
+    }
 };
 // constexpr size_t sizeOfT = sizeof(OverrideOdometry);
 
