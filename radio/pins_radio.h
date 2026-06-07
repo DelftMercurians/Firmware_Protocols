@@ -13,7 +13,7 @@ struct RadioPins {
     int cs;
     SpiBus spi_bus;
 };
-const RadioPins RobotPinMap = { PB0, PA4, SpiBus::Spi_2 };
+const RadioPins RobotPinMap = { PB8, PB12, SpiBus::Spi_2 };
 
 #ifdef BASE_STATION_MULTI_RADIO
 #define __RADIO_PINS_NUMBER_OF_RADIOS 4
