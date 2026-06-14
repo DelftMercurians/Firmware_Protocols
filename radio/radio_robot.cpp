@@ -1,5 +1,6 @@
 #include "radio.h"
 #include "radio/protocols_radio.h"
+#ifndef BASE_STATION_MULTI_NRF52
 
 // --------------ROBOT------------------ //
 
@@ -295,4 +296,4 @@ void CustomRF24_Robot::registerCallback<Radio::OverrideOdometry>(void (*fun)(Rad
     callback_override_odo = fun;
 }
 
-
+#endif

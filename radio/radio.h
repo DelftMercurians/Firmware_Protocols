@@ -2,16 +2,30 @@
 #pragma GCC system_header // Silence unnamed warnings
 
 #include <SPI.h>
+#ifndef BASE_STATION_MULTI_NRF52
+
 #include <nRF24L01.h>
 #include <RF24.h>
+
+#else
+
+#include <nrf_to_nrf.h>
+#define rf24_pa_dbm_e nrf_pa_dbm_e
+#define RF24_PA_MIN NRF_PA_MIN
+#define RF24_PA_MAX NRF_PA_MAX
+#define RF24 nrf_to_nrf
+#endif
 #include <radio/protocols_radio.h>
 #include <radio/pins_radio.h>
 #include <queue>
 
+
 class CustomRF24 : public RF24 {
     public:
         CustomRF24() : RF24() {};
+#ifndef BASE_STATION_MULTI_NRF52
         CustomRF24(rf24_gpio_pin_t _cepin, rf24_gpio_pin_t _cspin) : RF24(_cepin, _cspin) {};
+#endif
 
         void receiveMessage(Radio::Message& msg);
 
@@ -33,6 +47,7 @@ class CustomRF24 : public RF24 {
         
 };
 
+#ifndef BASE_STATION_MULTI_NRF52
 
 const uint8_t MAX_TX_BUFFER = 5;
 class CustomRF24_Robot : public CustomRF24 {
@@ -124,6 +139,8 @@ class CustomRF24_Robot : public CustomRF24 {
 
         void (*callback_msg)(Radio::Message) = nullptr;
 };
+
+#endif
 
 class CustomRF24_Base : public CustomRF24 {
     public:

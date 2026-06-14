@@ -3,11 +3,19 @@
 
 // Initialise Radio
 void CustomRF24::preInit(rf24_pa_dbm_e pa_level) {
+#ifndef BASE_STATION_MULTI_NRF52
 	this->begin(this->spi);
+#else
+    this->begin();
+#endif
     Serial.printf("Initialised Radio, IDENTITY = 0x%X\n", this->identity);
 	Serial.printf("Failure detected: %s\n", this->failureDetected ? "true" : "false");
 	Serial.printf("isChipConnected: %s\n", this->isChipConnected() ? "true" : "false");
+#ifndef BASE_STATION_MULTI_NRF52
 	Serial.printf("isPVariant: %s\n", this->isPVariant() ? "true" : "false");
+#else
+    Serial.printf("Variant: nRF52");
+#endif
     // this->setPayloadSize(sizeof(Radio::Message));
 	this->setPALevel(pa_level);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
     this->enableDynamicPayloads();
@@ -23,7 +31,11 @@ bool CustomRF24::sendMessage(Radio::Message msg, bool multicast) {
     // }
     // Serial.println();
     // this->stopListening();
+#ifndef BASE_STATION_MULTI_NRF52
     this->startFastWrite(&msg, sizeof(msg), multicast);
+#else
+    this->startWrite(&msg, sizeof(msg), multicast);
+#endif
     return true;
     // return this->write(&msg, sizeof(msg), multicast);
     // if(!res) {

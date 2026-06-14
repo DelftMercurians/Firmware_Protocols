@@ -13,6 +13,8 @@ struct RadioPins {
     int cs;
     SpiBus spi_bus;
 };
+
+#ifndef BASE_STATION_MULTI_NRF52
 const RadioPins RobotPinMap = { PB0, PA4, SpiBus::Spi_2 };
 
 #ifdef BASE_STATION_MULTI_RADIO
@@ -27,6 +29,13 @@ const RadioPins GroupPinMap[] = {
 #define __RADIO_PINS_NUMBER_OF_RADIOS 1
 const RadioPins GroupPinMap[] = {
     { PB0, PA4, SpiBus::Spi_1 },
+};
+#endif
+
+#else
+#define __RADIO_PINS_NUMBER_OF_RADIOS 1
+const RadioPins GroupPinMap[] = {
+    { 0, 0, SpiBus::Spi_1 },
 };
 #endif
 

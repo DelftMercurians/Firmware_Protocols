@@ -2,10 +2,13 @@
 #include "radio/protocols_radio.h"
 
 // ---------------BASE------------------ //
+#ifndef BASE_STATION_MULTI_NRF52
+
 CustomRF24_Base::CustomRF24_Base(uint8_t group)
     : CustomRF24(RadioPins::GroupPinMap[group].ce,  RadioPins::GroupPinMap[group].cs)
  {
     this->identity = group;
+    
     RadioPins::RadioPins pins = RadioPins::GroupPinMap[this->identity];
     if (pins.spi_bus == RadioPins::SpiBus::Spi_1) {
         this->spi = new SPIClass(PA7, PA6, PA5);
@@ -13,6 +16,17 @@ CustomRF24_Base::CustomRF24_Base(uint8_t group)
         this->spi = new SPIClass(PB15, PB14, PB13);
     }
 }
+
+#else
+
+CustomRF24_Base::CustomRF24_Base(uint8_t group)
+    : CustomRF24()
+ {
+    this->identity = group;
+}
+
+#endif
+
 
 void CustomRF24_Base::setRadioID(uint8_t identity) {
     this->identity = identity;
@@ -52,7 +66,7 @@ void CustomRF24_Base::openPipes(uint8_t num_radios_online) {
 
 bool CustomRF24_Base::receiveAndCallback(Radio::SSL_ID id) {
     Radio::Message msg;
-    auto size = getDynamicPayloadSize();
+    // auto size = getDynamicPayloadSize();
     receiveMessage(msg);
 
     if(callback_msg != nullptr){
