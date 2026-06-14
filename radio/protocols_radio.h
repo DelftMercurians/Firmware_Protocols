@@ -42,6 +42,7 @@ enum class Access : uint8_t {
 
 /* COMMAND MESSAGES */
 
+enum class RobotCommand : uint8_t;
 
 struct RobotCommand_ {
     // (3 bit) Max 7
@@ -79,7 +80,7 @@ struct RobotCommand_ {
     constexpr RobotCommand_(KickerCommand kc, KickerSelect ks = KickerSelect::UNSPECIFIED, Auxilliary aux = Auxilliary::NONE) :
         kicker_command((KickerCommand) (((uint8_t)kc) & 0b111)),
         kicker_select((KickerSelect) (((uint8_t)ks) & 0b1)),
-        auxilliary((Auxilliary) (((uint8_t)aux) & 0b111))
+        auxilliary((Auxilliary) (((uint8_t)aux) & 0b1111))
     { }
     
     static constexpr uint8_t to_byte_static(
@@ -87,13 +88,25 @@ struct RobotCommand_ {
     ) {
         return ((uint8_t)kc  & 0b111)        // bits [2:0]
             | (((uint8_t)ks & 0b001) << 3)  // bit  [3]
-            | (((uint8_t)aux & 0b111) << 4); // bits [6:4]
+            | (((uint8_t)aux & 0b1111) << 4); // bits [7:4]
     }
 
     static constexpr uint8_t to_byte_static(
         Auxilliary aux
     ) {
         return to_byte_static(KickerCommand::NONE, KickerSelect::UNSPECIFIED, aux);
+    }
+
+    static constexpr RobotCommand_ from_byte(uint8_t byte) {
+        return RobotCommand_(
+            (KickerCommand) (byte        & 0b0111),
+            (KickerSelect)  ((byte >> 3) & 0b0001),
+            (Auxilliary)    ((byte >> 4) & 0b1111)
+        );
+    }
+
+    static constexpr RobotCommand_ from_byte(RobotCommand byte) {
+        return from_byte((uint8_t) byte);
     }
 };
 static_assert(sizeof(RobotCommand_) == 1);
@@ -178,7 +191,7 @@ struct PrimaryStatusHF {
 
         bool tof_ball_detected : 1;         // (1 bit) Time of flight sensor is detecting ball
         bool tof_sensor_ok : 1;             // (1 bit) Time of flight sensor is working
-    } ball_detection_raw;  // (1 byte) Ball detection bitfield
+    };  // (1 byte) Ball detection bitfield
     
     int8_t tof_ball_x;  // (1 byte) Time of flight ball sensor x position
     int8_t tof_ball_y;  // (1 byte) Time of flight ball sensor y position
