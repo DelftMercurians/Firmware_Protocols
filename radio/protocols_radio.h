@@ -43,32 +43,32 @@ enum class Access : uint8_t {
 /* COMMAND MESSAGES */
 // Robot commands
 enum class RobotCommand : uint8_t {
-    NONE,
+    NONE = 0x00,
 
-    ARM,        // Arm the high voltage circuitry
-    DISARM,     // Disarm the high voltage circuitry
+    ARM = 0x01,        // Arm the high voltage circuitry
+    DISARM = 0x02,     // Disarm the high voltage circuitry
 
-    DISCHARGE,  // Discharge the capacitor
+    DISCHARGE = 0x03,  // Discharge the capacitor
 
-    KICK,       // Kick the ball
-    CHIP,       // Chip the ball
+    KICK = 0x04,       // Kick the ball
+    CHIP = 0x05,       // Chip the ball
 
-    POWER_BOARD_OFF,    // Switch the power board off, shouldn't happen here, but what can I say
-    REBOOT,     // Reboot mainboard
+    POWER_BOARD_OFF = 0x06,    // Switch the power board off, shouldn't happen here, but what can I say
+    REBOOT = 0x07,     // Reboot mainboard
 
-    BEEP,   // Make a beep noise
+    BEEP = 0x08,   // Make a beep noise
 
-    COAST,  // Coast all the motors
+    COAST = 0x09,  // Coast all the motors
 
-    HEADING_CONTROL,    // Z command is heading angle (rad)
-    YAW_RATE_CONTROL,   // Z command is yaw rate (rad/s)
+    HEADING_CONTROL = 0x0A,    // Z command is heading angle (rad)
+    YAW_RATE_CONTROL = 0x0B,   // Z command is yaw rate (rad/s)
 
 
-    ARM_COUNTER_KICK,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do kick)
-    ARM_COUNTER_CHIP,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip)
+    ARM_COUNTER_KICK = 0x0C,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do kick)
+    ARM_COUNTER_CHIP = 0x0D,        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip)
 
-    ARM_TIMED_KICK,     // Arm the high voltage circuitry, set countdown time until kick
-    ARM_TIMED_CHIP,     // Arm the high voltage circuitry, set countdown time until chip
+    ARM_TIMED_KICK = 0x0E,     // Arm the high voltage circuitry, set countdown time until kick
+    ARM_TIMED_CHIP = 0x0F,     // Arm the high voltage circuitry, set countdown time until chip
 };
 
 // Command from mothership to robot (28 bytes)
@@ -84,7 +84,7 @@ struct Command {
 
     float kick_time;                // How long to kick for (if kick is requested) (4 bytes)
 
-    float fan_speed;                // Downforce fan speed (percentage) (4 bytes)
+    float fan_speed [[deprecated]];                // Downforce fan speed (percentage) (4 bytes)
 };
 
 struct GlobalCommand {
@@ -110,31 +110,14 @@ struct GlobalCommand {
 
 
 /* REPLY MESSAGES */
-// TODO: scrap this
-// Reply from robot to mothership
-struct Reply {
-    HG::Status status;          // Robot MCU status
-    HG::Status md_status[5];    // Motor driver MCU statuses
-    HG::Status kick_status;     // Kicker status
-    HG::Status fan_status;      // Fan status
-    HG::Pose speed;             // Measured speed
-};
-
-/* STATUS MESSAGES */
-// Repeated status heartbeat from robot
-struct Status {
-    // HG::Status primary_status;
-    // CAN::MotorStatus motor_status[5];
-    // HG::KickerStatus kicker_status;
-    // HG::Status fan_status;
-};
-
 // High frequency primary mcu status (28 bytes)
 struct PrimaryStatusHF {
-    uint16_t pressure;              // (2 bytes)
+    uint16_t pressure [[deprecated]];              // (2 bytes)
     uint8_t smart_kick_counter_return;  // (1 byte) number of the kick that was ok or not
     uint8_t last_kick_ok;           // (1 byte), 0 if kick not ok, 1 or higher if kick ok
+    // TODO send these more compactly, so we can send more other feedback data
     float motor_speeds[5];          // (20 bytes)
+    // TODO: do breakbeam handling more efficiently
     bool breakbeam_ball_detected;   // (1 byte)
     bool breakbeam_sensor_ok;       // (1 byte)
     uint8_t _pad1[2];    // Explicit padding (2 bytes)
@@ -146,10 +129,10 @@ struct PrimaryStatusLF {
     uint8_t motor_driver_temps[5];
     uint8_t cap_voltage;
 
-    HG::Status power_board_status;
+    HG::Status power_board_status [[deprecated]];
     HG::Status primary_status;
     HG::Status kicker_status;
-    HG::Status fan_status;
+    HG::Status fan_status [[deprecated]];
     HG::Status imu_status;  // TODO: IMU chip status (for later)
     HG::Status motor_status[5];
 };
@@ -198,9 +181,9 @@ struct OverrideOdometry {
 enum class MessageType : uint8_t {
     None = 0x00,               // No message received
     Command = 0x01,            // A command message
-    Reply = 0x02,              // A reply from the robot
+    Reply [[deprecated]] = 0x02,              // A reply from the robot
     ConfigMessage = 0x03,      // A configuration message
-    // Status = 0x04,             // A hearbeat status message
+    Status [[deprecated]] = 0x04,             // A hearbeat status message
     PrimaryStatusHF = 0x10,    // A hearbeat status message (high freq.)
     PrimaryStatusLF = 0x11,    // A hearbeat status message (low freq.)
     ImuReadings = 0x12,        // IMU readings message
@@ -220,9 +203,7 @@ struct Message {
     union {
         Command c;  // 28 bytes
         GlobalCommand gc;  // 28 bytes
-        // Reply r;
         // ConfigMessage cm;
-        // Status s;
         MultiConfigMessage mcm;
         PrimaryStatusHF ps_hf; // 28 bytes
         OdometryReading odo; // 28 bytes

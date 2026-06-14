@@ -19,23 +19,23 @@ struct Pose {
 
 // Statuses that the robot or motor controller MCU's could have
 enum class Status : uint8_t {
-    EMERGENCY,      // Robot is in estop because something is very wrong
-    OK,             // Everything is running as it should
-    STOP,           // The robot is stopped, but can be started again easily
-    STARTING,       // The MCU is performing a startup procedure
-    OVERTEMP,       // For when something has overheated
+    EMERGENCY = 0x00,      // Robot is in estop because something is very wrong
+    OK = 0x01,             // Everything is running as it should
+    STOP = 0x02,           // The robot is stopped, but can be started again easily
+    STARTING = 0x03,       // The MCU is performing a startup procedure
+    OVERTEMP = 0x04,       // For when something has overheated
 
-    NO_REPLY,       // No reply was received. This is not explicitly sent, but defaulted to.
+    NO_REPLY = 0x05,       // No reply was received. This is not explicitly sent, but defaulted to.
 
-    ARMED,          // Kicker is armed, capacitor will be automatically recharged
-    DISARMED,       // Kicker is disarmed, but capacitor may still be on
-    SAFE,           // Kicker is discharged and safe to handle
+    ARMED = 0x06,          // Kicker is armed, capacitor will be automatically recharged
+    DISARMED = 0x07,       // Kicker is disarmed, but capacitor may still be on
+    SAFE = 0x08,           // Kicker is discharged and safe to handle
 
-    NOT_INSTALLED,  // This submodule is not installed/implemented
+    NOT_INSTALLED = 0x09,  // This submodule is not installed/implemented
 
-    STANDBY,        // Submodule is inactive, but ready to go
+    STANDBY = 0x0A,        // Submodule is inactive, but ready to go
 
-    READY,          // Kicker is charged and ready to fire
+    READY = 0x0B,          // Kicker is charged and ready to fire
 };
 
 // Kicker status message
@@ -48,7 +48,7 @@ struct KickerStatus {
 };
 
 // Battery pack enable/disable status
-enum class PackEnable : uint8_t {
+enum class [[deprecated]] PackEnable : uint8_t {
     BOTH = 0b11,       // Both battery packs enabled
     LEFT_ONLY = 0b10,  // Only left battery pack enabled
     RIGHT_ONLY = 0b01, // Only right battery pack enabled
@@ -92,60 +92,60 @@ enum class VariableType : uint8_t {
 
 // Robot Variables (8 bits)
 enum class Variable : uint8_t {
-    NONE,
+    NONE = 0x00,
 
-    ROBOT_ID,
+    ROBOT_ID = 0x01,
 
-    MODE,
+    MODE = 0x02,
 
-    UID_0,
-    UID_1,
-    UID_2,
+    UID_0 = 0x03,
+    UID_1 = 0x04,
+    UID_2 = 0x05,
 
-    DIPSWITCHES,
+    DIPSWITCHES = 0x06,
 
-    FW_VERSION_MAJOR,
-    FW_VERSION_MINOR,
-    FW_VERSION_PATCH,
+    FW_VERSION_MAJOR = 0x07,
+    FW_VERSION_MINOR = 0x08,
+    FW_VERSION_PATCH = 0x09,
 
-    FW_PROTOCOL_VERSION_MAJOR,
-    FW_PROTOCOL_VERSION_MINOR,
+    FW_PROTOCOL_VERSION_MAJOR = 0x0A,
+    FW_PROTOCOL_VERSION_MINOR = 0x0B,
 
-    STATUS_PRIMARY,
-    STATUS_KICKER,
-    STATUS_IMU,
-    STATUS_FAN,
-    STATUS_POWER_BOARD,
+    STATUS_PRIMARY = 0x0C,
+    STATUS_KICKER = 0x0D,
+    STATUS_IMU = 0x0E,
+    STATUS_FAN [[deprecated]] = 0x0F,
+    STATUS_POWER_BOARD [[deprecated]] = 0x10,
 
-    PACK_L_ENABLE,
-    PACK_R_ENABLE,
+    PACK_L_ENABLE [[deprecated]] = 0x11,
+    PACK_R_ENABLE [[deprecated]] = 0x12,
 
-    PACK_L_VOLTAGE,
-    PACK_R_VOLTAGE,
+    PACK_L_VOLTAGE = 0x13,
+    PACK_R_VOLTAGE = 0x14,
 
-    DUCT_PRESSURE,
+    DUCT_PRESSURE [[deprecated]] = 0x15,
 
-    BREAKBEAM_SENSOR_OK,
-    BREAKBEAM_BALL_DETECTED,
+    BREAKBEAM_SENSOR_OK = 0x16,
+    BREAKBEAM_BALL_DETECTED = 0x17,
 
-    KICKER_VOLTAGE,
-    KICKER_TEMPERATURE,
-    KICKER_MODE,
+    KICKER_VOLTAGE = 0x18,
+    KICKER_TEMPERATURE = 0x19,
+    KICKER_MODE = 0x1A,
 
-    MOTION_POS_X,
-    MOTION_POS_Y,
-    MOTION_ANG_Z,
+    MOTION_POS_X = 0x1B,
+    MOTION_POS_Y = 0x1C,
+    MOTION_ANG_Z = 0x1D,
 
-    MOTION_VEL_X,
-    MOTION_VEL_Y,
-    MOTION_ANG_VEL_Z,
-    MOTION_VEL_NULL,
+    MOTION_VEL_X = 0x1E,
+    MOTION_VEL_Y = 0x1F,
+    MOTION_ANG_VEL_Z = 0x20,
+    MOTION_VEL_NULL = 0x21,
 
-    MOTION_ACC_X,
-    MOTION_ACC_Y,
-    MOTION_ANG_ACC_Z,
+    MOTION_ACC_X = 0x22,
+    MOTION_ACC_Y = 0x23,
+    MOTION_ANG_ACC_Z = 0x24,
 
-    RADIO_CHANNEL,
+    RADIO_CHANNEL = 0x25,
 
 };
 

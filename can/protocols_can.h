@@ -45,11 +45,11 @@ enum class VARIABLE {
     UNIQUE_ID_1 = 0x03,
     UNIQUE_ID_2 = 0x04,
 
-    PACK_L_VOLTAGE = 0x05,  // Left battery pack voltage <float>
-    PACK_R_VOLTAGE = 0x06,  // Right battery pack voltage <float>
-    PACK_EN = 0x07,         // Battery pack enable <HG::PackEnable>
-    FAN_SPEED = 0x08,       // Fan speed percentage (0 = off, <50 = low, >50 = high)
-    STATUS_POWER_BOARD = 0x09,  // <HG::Status>
+    PACK_L_VOLTAGE [[deprecated]] = 0x05,  // Left battery pack voltage <float>
+    PACK_R_VOLTAGE [[deprecated]] = 0x06,  // Right battery pack voltage <float>
+    PACK_EN [[deprecated]] = 0x07,         // Deprecated (PACK_EN) Battery pack enable <HG::PackEnable>
+    FAN_SPEED [[deprecated]] = 0x08,   // Deprecated (FAN_SPEED) (Fan speed percentage (0 = off, <50 = low, >50 = high))
+    STATUS_POWER_BOARD [[deprecated]] = 0x09,   // Deprecated (STATUS_POWER_BOARD) <HG::Status>
 
     COMMAND = 0x0A,
     ENCODER = 0x0B,
