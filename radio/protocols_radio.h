@@ -219,8 +219,13 @@ struct PrimaryStatusLF {
     HG::Status imu_status;
     HG::Status tof_status;
     HG::Status motor_status[5];
+    
+    uint16_t avg_loop_time;     // 10 microseconds per LSB
+    uint16_t max_loop_time;     // 10 microseconds per LSB
+
+    uint8_t _pad[4];
 };
-static_assert(sizeof(PrimaryStatusLF) == 20);
+static_assert(sizeof(PrimaryStatusLF) == 28);
 
 // (24 bytes)
 struct ImuReadings {
@@ -303,10 +308,7 @@ struct Message {
         OdometryReading odo; // 28 bytes
         OverrideOdometry over_odo; // 28 bytes
         SerialMessage serial; // 28 bytes
-        struct {
-            PrimaryStatusLF ps_lf; // 18 bytes + padding
-            uint8_t _pad0[8];
-        };
+        PrimaryStatusLF ps_lf; // 28 bytes
         struct {
             ImuReadings ir;
             uint8_t _pad1[4];
