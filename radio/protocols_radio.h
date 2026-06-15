@@ -193,8 +193,8 @@ struct PrimaryStatusHF {
         bool tof_sensor_ok : 1;             // (1 bit) Time of flight sensor is working
     };  // (1 byte) Ball detection bitfield
     
-    int8_t tof_ball_x;  // (1 byte) Time of flight ball sensor x position
-    int8_t tof_ball_y;  // (1 byte) Time of flight ball sensor y position
+    uint8_t tof_ball_x;  // (1 byte) Time of flight ball sensor x position (distance)
+    int8_t tof_ball_y;  // (1 byte) Time of flight ball sensor y position (left to right)
 
     uint16_t breakbeam_raw; // (2 bytes) Raw data from the breakbeam
 
