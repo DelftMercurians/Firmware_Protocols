@@ -146,6 +146,53 @@ enum class Variable : uint8_t {
     MOTION_ANG_ACC_Z = 0x24,
 
     RADIO_CHANNEL = 0x25,
+    RADIO_CHANNEL_ALT = 0x26,
+    RADIO_CHANNEL_DEBUG = 0x27,
+
+    LOG_LEVEL_SERIAL = 0x28,
+    LOG_LEVEL_RADIO = 0x29,
+    LOG_LEVEL_SD = 0x2A,
+
+    THRESHOLD_BREAKBEAM = 0x2B,
+
+    THRESHOLD_BATTERY_LOW = 0x2C,
+    THRESHOLD_BATTERY_CRITICAL = 0x2D,
+
+    TRIGGER_SAVE = 0x31,
+
+    SAS_Kp_yaw = 0x40,
+    SAS_Kd_yaw = 0x41,
+    SAS_max_yaw_speed = 0x42,
+    SAS_max_yaw_accel = 0x43,
+    SAS_max_lin_speed = 0x44,
+    SAS_max_lin_accel = 0x45,
+    SAS_gain_scheduling_threshold = 0x46,
+    SAS_gain_scheduling_multiplier = 0x47,
+    SAS_RESERVED_1 = 0x48,
+    SAS_RESERVED_2 = 0x49,
+    SAS_RESERVED_3 = 0x4A,
+    SAS_RESERVED_4 = 0x4B,
+    SAS_RESERVED_5 = 0x4C,
+    SAS_RESERVED_6 = 0x4D,
+    SAS_RESERVED_7 = 0x4E,
+    SAS_RESERVED_8 = 0x4F,
+
+    SAS_Fallback_Kp_yaw = 0x50,
+    SAS_Fallback_Kd_yaw = 0x51,
+    SAS_Fallback_max_yaw_speed = 0x52,
+    SAS_Fallback_max_yaw_accel = 0x53,
+    SAS_Fallback_max_lin_speed = 0x54,
+    SAS_Fallback_max_lin_accel = 0x55,
+    SAS_Fallback_RESERVED_1 = 0x56,
+    SAS_Fallback_RESERVED_2 = 0x57,
+    SAS_Fallback_RESERVED_3 = 0x58,
+    SAS_Fallback_RESERVED_4 = 0x59,
+    SAS_Fallback_RESERVED_5 = 0x5A,
+    SAS_Fallback_RESERVED_6 = 0x5B,
+    SAS_Fallback_RESERVED_7 = 0x5C,
+    SAS_Fallback_RESERVED_8 = 0x5D,
+    SAS_Fallback_RESERVED_9 = 0x5E,
+    SAS_Fallback_RESERVED_A = 0x5F,
 
 };
 
