@@ -73,6 +73,8 @@ enum class VARIABLE {
     LIM_C = 0x18,       // Current limit
     LIM_U = 0x19,       // Voltage limit
     LIM_V = 0x1A,       // Speed limit
+
+    CURRENT_MES = 0x1B, // Measured motor current
     
     // Current D
     PID_CD_P = 0x20,    // Proportional
