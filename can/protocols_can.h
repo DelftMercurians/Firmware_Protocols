@@ -45,11 +45,11 @@ enum class VARIABLE {
     UNIQUE_ID_1 = 0x03,
     UNIQUE_ID_2 = 0x04,
 
-    PACK_L_VOLTAGE = 0x05,  // Left battery pack voltage <float>
-    PACK_R_VOLTAGE = 0x06,  // Right battery pack voltage <float>
-    PACK_EN = 0x07,         // Battery pack enable <HG::PackEnable>
-    FAN_SPEED = 0x08,       // Fan speed percentage (0 = off, <50 = low, >50 = high)
-    STATUS_POWER_BOARD = 0x09,  // <HG::Status>
+    PACK_L_VOLTAGE [[deprecated]] = 0x05,  // Left battery pack voltage <float>
+    PACK_R_VOLTAGE [[deprecated]] = 0x06,  // Right battery pack voltage <float>
+    PACK_EN [[deprecated]] = 0x07,         // Deprecated (PACK_EN) Battery pack enable <HG::PackEnable>
+    FAN_SPEED [[deprecated]] = 0x08,   // Deprecated (FAN_SPEED) (Fan speed percentage (0 = off, <50 = low, >50 = high))
+    STATUS_POWER_BOARD [[deprecated]] = 0x09,   // Deprecated (STATUS_POWER_BOARD) <HG::Status>
 
     COMMAND = 0x0A,
     ENCODER = 0x0B,
@@ -73,6 +73,8 @@ enum class VARIABLE {
     LIM_C = 0x18,       // Current limit
     LIM_U = 0x19,       // Voltage limit
     LIM_V = 0x1A,       // Speed limit
+
+    CURRENT_MES = 0x1B, // Measured motor current
     
     // Current D
     PID_CD_P = 0x20,    // Proportional
@@ -114,21 +116,17 @@ enum class VARIABLE {
 
 
 // Wheel speed command message
-const float CAN_SCALE_SPEED = (400.0/INT16_MAX);
 struct COMMAND {
-    int16_t speeds[4];
+    int16_t speeds[4];  // Scaled by Scale::WHEEL_SPEED
 };
 static_assert(sizeof(COMMAND) <= 8, "COMMAND exceeds maximum size");
 // *******
 
 // Motor Status message
-const float CAN_SCALE_TEMP = (200.0/INT8_MAX);
-// const float CAN_SCALE_BATV = (50.0/INT8_MAX);
-const float CAN_SCALE_BATV = 0.1;
 struct MotorStatus {
     HG::Status status;
-    int8_t temp;
-    int8_t battV;
+    int8_t temp;    // Scaled by Scale::MD_TEMP
+    int8_t battV;   // Scaled by Scale::MD_BATV
 };
 struct MotorStatusMessage {
     DEVICE_ID txId;    // transmitting device
