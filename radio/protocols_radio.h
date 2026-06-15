@@ -273,7 +273,8 @@ static_assert(sizeof(OverrideOdometry) == 28);
 
 // (28 bytes)
 struct SerialMessage {
-    char text[28];
+    uint32_t start_offset;
+    char text[24];
 };
 static_assert(sizeof(SerialMessage) == 28);
 
