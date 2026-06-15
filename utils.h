@@ -36,6 +36,8 @@ enum class Status : uint8_t {
     STANDBY = 0x0A,        // Submodule is inactive, but ready to go
 
     READY = 0x0B,          // Kicker is charged and ready to fire
+
+    COOLDOWN = 0x0C,       // Kicker has kicked too many times in a row
 };
 
 // Kicker status message
