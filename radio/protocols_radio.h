@@ -182,7 +182,8 @@ static_assert(sizeof(GlobalCommand) == 28);
 /* REPLY MESSAGES */
 // High frequency primary mcu status (28 bytes)
 struct PrimaryStatusHF {
-    float motor_speeds[5];          // (20 bytes)
+    int16_t motor_speeds_i[5];          // (10 bytes) Scaled from float with Scale::WHEEL_SPEED
+    int16_t motor_currents_i[5];        // (10 bytes) Scaled from float with Scale::CURRENT
 
     uint8_t smart_kick_counter_return;  // (1 byte) number of the kick that was ok or not
     struct {
@@ -206,13 +207,14 @@ static_assert(sizeof(PrimaryStatusHF) == 28);
 
 // Low frequency primary mcu status (18 bytes)
 struct PrimaryStatusLF {
-    uint16_t main_board_current; // Scaled from float with Scale::CURRENT
+    int16_t main_board_current; // Scaled from float with Scale::CURRENT
 
     uint8_t pack_voltages[2];   // Scaled from float with Scale::MD_BATV
     uint8_t motor_driver_temps[5];  // Scaled from float with Scale::MD_TEMP
     
     uint8_t cap_voltage;    // Scaled from float with Scale::KICKER_VCAP
-    int8_t kicker_temp;    // Scaled from float with Scale::KICKER_TEMP
+
+    uint8_t _pad0;
 
     HG::Status primary_status;
     HG::Status kicker_status;
