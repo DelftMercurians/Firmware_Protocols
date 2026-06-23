@@ -38,6 +38,9 @@ enum class Status : uint8_t {
     READY = 0x0B,          // Kicker is charged and ready to fire
 
     COOLDOWN = 0x0C,       // Kicker has kicked too many times in a row
+
+    ARMED_REFLEX = 0x0D,     // Kicker is armed in reflex mode, will kick when ball is detected
+    COOLDOWN_REFLEX = 0x0E,  // Kicker is in cooldown for reflex kicks but can still kick normally
 };
 
 // Kicker status message
@@ -271,6 +274,13 @@ enum class Variable : uint8_t {
     MD_DRIBBLER_RESERVED_3 = 0x9D,
     MD_DRIBBLER_RESERVED_4 = 0x9E,
     MD_DRIBBLER_RESERVED_5 = 0x9F,
+
+    BB_EXTREMA_COUNT = 0xA0,
+    BB_EXPECTED_GAP = 0xA1,
+    BB_HYSTERESIS = 0xA2,
+    BB_CALIBRATION_WINDOWS = 0xA3,
+    BB_CALIBRATION_TIMEOUT_MS = 0xA4,
+    BB_STATE_CONFIRM_WINDOWS = 0xA5,
 };
 
 } // namespace HG

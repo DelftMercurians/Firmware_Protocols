@@ -71,6 +71,8 @@ struct RobotCommand_ {
         BEEP = 0x2,         // Make the robot beep
         REBOOT = 0x3,       // Reboot the main board microcontroller
         POWER_OFF = 0x4,    // Switch the robot off
+        CALIBRATE_IMU = 0x5,  // Calibrate the IMU
+        CALIBRATE_BB = 0x6,   // Calibrate the breakbeam sensor
     };
 
     KickerCommand kicker_command : 3;
@@ -140,6 +142,12 @@ enum class RobotCommand : uint8_t {
 
     ARM_TIMED_KICK = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::KICKER),     // Arm the high voltage circuitry, set countdown time until kick
     ARM_TIMED_CHIP = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::CHIPPER),     // Arm the high voltage circuitry, set countdown time until chip
+
+    ARM_REFLEX_KICK = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::KICKER),   // Arm the high voltage circuitry, kick when ball detected
+    ARM_REFLEX_CHIP = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::CHIPPER),   // Arm the high voltage circuitry, chip when ball detected
+
+    CALIBRATE_IMU = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_IMU),  // Calibrate the IMU
+    CALIBRATE_BB = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_BB),    // Calibrate the breakbeam sensor
 };
 
 struct GenericCommand {
