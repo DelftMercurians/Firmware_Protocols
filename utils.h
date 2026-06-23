@@ -38,9 +38,14 @@ enum class Status : uint8_t {
     READY = 0x0B,          // Kicker is charged and ready to fire
 
     COOLDOWN = 0x0C,       // Kicker has kicked too many times in a row
+};
 
-    ARMED_REFLEX = 0x0D,     // Kicker is armed in reflex mode, will kick when ball is detected
-    COOLDOWN_REFLEX = 0x0E,  // Kicker is in cooldown for reflex kicks but can still kick normally
+// (2 bit) Max 3 = 0x3
+enum class ReflexState : uint8_t {
+    OFF = 0x00,            // Kicker is not armed in reflex mode
+    ARMED = 0x01,          // Kicker is armed in reflex mode
+    COOLDOWN = 0x02,       // Kicker is in cooldown for reflex kicks but can still kick normally
+    EMERGENCY = 0x03,      // Reflex kicking can't be used
 };
 
 // Kicker status message

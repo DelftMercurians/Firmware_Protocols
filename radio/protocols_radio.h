@@ -208,8 +208,11 @@ struct PrimaryStatusHF {
     uint16_t breakbeam_raw; // (2 bytes) Raw data from the breakbeam
 
     struct {
-        uint8_t last_kick_ok : 4; // (4 bit), 0 if kick not ok, 1 or more if kick ok
-        uint8_t reflex_kick_counter: 4; // (4 bit) number of reflex kicks since last arm
+        bool last_kick_ok : 1; // (1 bit), 0 if kick not ok, 1 if kick ok
+
+        uint8_t kick_counter: 4; // (4 bit) number of reflex kicks since last arm
+
+        HG::ReflexState reflex_state: 2; // (2 bit) state of the reflex kick system
     };  // (1 byte) Kick status bitfield
     
     uint8_t _pad1[1];    // Explicit padding (1 bytes)
