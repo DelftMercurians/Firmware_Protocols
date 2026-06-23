@@ -40,6 +40,14 @@ enum class Status : uint8_t {
     COOLDOWN = 0x0C,       // Kicker has kicked too many times in a row
 };
 
+// (2 bit) Max 3 = 0x3
+enum class ReflexState : uint8_t {
+    OFF = 0x00,            // Kicker is not armed in reflex mode
+    ARMED = 0x01,          // Kicker is armed in reflex mode
+    COOLDOWN = 0x02,       // Kicker is in cooldown for reflex kicks but can still kick normally
+    EMERGENCY = 0x03,      // Reflex kicking can't be used
+};
+
 // Kicker status message
 const float KICKER_SCALE_TEMP = (100.0/INT8_MAX);
 const float KICKER_SCALE_VCAP = (260.0/UINT8_MAX);
@@ -271,6 +279,19 @@ enum class Variable : uint8_t {
     MD_DRIBBLER_RESERVED_3 = 0x9D,
     MD_DRIBBLER_RESERVED_4 = 0x9E,
     MD_DRIBBLER_RESERVED_5 = 0x9F,
+
+    BB_EXTREMA_COUNT = 0xA0,
+    BB_EXPECTED_GAP = 0xA1,
+    BB_HYSTERESIS = 0xA2,
+    BB_CALIBRATION_WINDOWS = 0xA3,
+    BB_CALIBRATION_TIMEOUT_MS = 0xA4,
+    BB_STATE_CONFIRM_WINDOWS = 0xA5,
+
+    REFLEX_KICK_RECHARGE_TIME = 0xA6,
+    REFLEX_KICK_COOLDOWN_TIME = 0xA7,
+    REFLEX_KICK_MAX_COUNT = 0xA8,
+
+    KICKER_COOLDOWN_TIME = 0xA9,
 };
 
 } // namespace HG

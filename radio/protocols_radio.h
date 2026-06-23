@@ -71,6 +71,8 @@ struct RobotCommand_ {
         BEEP = 0x2,         // Make the robot beep
         REBOOT = 0x3,       // Reboot the main board microcontroller
         POWER_OFF = 0x4,    // Switch the robot off
+        CALIBRATE_IMU = 0x5,  // Calibrate the IMU
+        CALIBRATE_BB = 0x6,   // Calibrate the breakbeam sensor
     };
 
     KickerCommand kicker_command : 3;
@@ -140,6 +142,12 @@ enum class RobotCommand : uint8_t {
 
     ARM_TIMED_KICK = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::KICKER),     // Arm the high voltage circuitry, set countdown time until kick
     ARM_TIMED_CHIP = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::CHIPPER),     // Arm the high voltage circuitry, set countdown time until chip
+
+    ARM_REFLEX_KICK = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::KICKER),   // Arm the high voltage circuitry, kick when ball detected
+    ARM_REFLEX_CHIP = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::CHIPPER),   // Arm the high voltage circuitry, chip when ball detected
+
+    CALIBRATE_IMU = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_IMU),  // Calibrate the IMU
+    CALIBRATE_BB = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_BB),    // Calibrate the breakbeam sensor
 };
 
 struct GenericCommand {
@@ -199,9 +207,13 @@ struct PrimaryStatusHF {
 
     uint16_t breakbeam_raw; // (2 bytes) Raw data from the breakbeam
 
-    uint8_t last_kick_ok;           // (1 byte), 0 if kick not ok, 1 or higher if kick ok
+    struct {
+        bool last_kick_ok : 1; // (1 bit), 0 if kick not ok, 1 if kick ok
+
+        HG::ReflexState reflex_state: 2; // (2 bit) state of the reflex kick system
+    };  // (1 byte) Kick status bitfield
     
-    uint8_t _pad1[1];    // Explicit padding (1 bytes)
+    uint8_t kick_counter; // (4 bit) number of reflex kicks since last arm
 };
 static_assert(sizeof(PrimaryStatusHF) == 28);
 
