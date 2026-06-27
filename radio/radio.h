@@ -4,22 +4,26 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+#include <logger/logger.hpp>
 #include <radio/protocols_radio.h>
 #include <radio/pins_radio.h>
 #include <queue>
 
 class CustomRF24 : public RF24 {
     public:
-        CustomRF24() : RF24() {};
-        CustomRF24(rf24_gpio_pin_t _cepin, rf24_gpio_pin_t _cspin) : RF24(_cepin, _cspin) {};
+        CustomRF24() : RF24() { logger = getDefaultLogger(); };
+        CustomRF24(rf24_gpio_pin_t _cepin, rf24_gpio_pin_t _cspin) : RF24(_cepin, _cspin) { logger = getDefaultLogger(); };
 
         void receiveMessage(Radio::Message& msg);
+        void setLogger(Logger* logger_instance);
 
         
     protected:
         uint8_t identity;
         SPIClass* spi;
         uint8_t num_radios_online = 1;
+        Logger* logger;
+        static Logger* getDefaultLogger();
 
         bool sendMessage(Radio::Message msg, bool multicast = false);
 
