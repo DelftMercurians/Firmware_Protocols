@@ -73,6 +73,9 @@ struct RobotCommand_ {
         POWER_OFF = 0x4,    // Switch the robot off
         CALIBRATE_IMU = 0x5,  // Calibrate the IMU
         CALIBRATE_BB = 0x6,   // Calibrate the breakbeam sensor
+        MAGNET_MODE_ON = 0x7, // Turn on magnet mode in both directions
+        MAGNET_MODE_X_ONLY = 0x8,   // Turn on magnet mode in the lateral direction
+        MAGNET_MODE_Y_ONLY = 0x9,   // Turn on magnet mode in the forwards/backwards direction
     };
 
     KickerCommand kicker_command : 3;
@@ -116,6 +119,9 @@ static_assert(sizeof(RobotCommand_) == 1);
 // Robot commands
 enum class RobotCommand : uint8_t {
     NONE = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::NONE),
+    NONE_MAGNET = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::NONE, RobotCommand_::KickerSelect::UNSPECIFIED, RobotCommand_::Auxilliary::MAGNET_MODE_ON),
+    NONE_MAGNET_X = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::NONE, RobotCommand_::KickerSelect::UNSPECIFIED, RobotCommand_::Auxilliary::MAGNET_MODE_X_ONLY),
+    NONE_MAGNET_Y = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::NONE, RobotCommand_::KickerSelect::UNSPECIFIED, RobotCommand_::Auxilliary::MAGNET_MODE_Y_ONLY),
 
     ARM = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM), // Arm the high voltage circuitry
 
@@ -139,12 +145,21 @@ enum class RobotCommand : uint8_t {
 
     ARM_COUNTER_KICK = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_COUNTER, RobotCommand_::KickerSelect::KICKER),        // Arm the high voltage circuitry, wait for increment of smart kick counter (do kick)
     ARM_COUNTER_CHIP = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_COUNTER, RobotCommand_::KickerSelect::CHIPPER),        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip)
+    ARM_COUNTER_KICK_MAGNET = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_COUNTER, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_ON),        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip), magnet mode on both axes
+    ARM_COUNTER_KICK_MAGNET_X = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_COUNTER, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_X_ONLY),        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip), magnet mode on X
+    ARM_COUNTER_KICK_MAGNET_Y = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_COUNTER, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_Y_ONLY),        // Arm the high voltage circuitry, wait for increment of smart kick counter (do chip), magnet mode on Y
 
     ARM_TIMED_KICK = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::KICKER),     // Arm the high voltage circuitry, set countdown time until kick
     ARM_TIMED_CHIP = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::CHIPPER),     // Arm the high voltage circuitry, set countdown time until chip
+    ARM_TIMED_KICK_MAGNET = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_ON),        // Arm the high voltage circuitry, set countdown time until kick, magnet mode on both axes
+    ARM_TIMED_KICK_MAGNET_X = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_X_ONLY),        // Arm the high voltage circuitry, set countdown time until kick, magnet mode on X
+    ARM_TIMED_KICK_MAGNET_Y = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_TIMED, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_Y_ONLY),        // Arm the high voltage circuitry, set countdown time until kick, magnet mode on Y
 
     ARM_REFLEX_KICK = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::KICKER),   // Arm the high voltage circuitry, kick when ball detected
     ARM_REFLEX_CHIP = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::CHIPPER),   // Arm the high voltage circuitry, chip when ball detected
+    ARM_REFLEX_KICK_MAGNET = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_ON),        // Arm the high voltage circuitry, kick when ball detected, magnet mode on both axes
+    ARM_REFLEX_KICK_MAGNET_X = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_X_ONLY),        // Arm the high voltage circuitry, kick when ball detected, magnet mode on X
+    ARM_REFLEX_KICK_MAGNET_Y = RobotCommand_::to_byte_static(RobotCommand_::KickerCommand::ARM_REFLEX, RobotCommand_::KickerSelect::KICKER, RobotCommand_::Auxilliary::MAGNET_MODE_Y_ONLY),        // Arm the high voltage circuitry, kick when ball detected, magnet mode on Y
 
     CALIBRATE_IMU = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_IMU),  // Calibrate the IMU
     CALIBRATE_BB = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_BB),    // Calibrate the breakbeam sensor
@@ -204,6 +219,8 @@ struct PrimaryStatusHF {
         bool last_kick_ok : 1; // (1 bit), 0 if kick not ok, 1 if kick ok
 
         HG::ReflexState reflex_state: 2; // (2 bit) state of the reflex kick system
+
+        bool magnet_mode_on : 1; // (1 bit) Magnet mode active, trying to go to ball
     };  // (1 byte) Ball detection bitfield
     
     int8_t tof_ball_x;  // (1 byte) Time of flight ball sensor y position (left negative to right positive)
