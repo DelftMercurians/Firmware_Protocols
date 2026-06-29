@@ -237,7 +237,9 @@ struct PrimaryStatusLF {
     uint16_t avg_loop_time;     // 10 microseconds per LSB
     uint16_t max_loop_time;     // 10 microseconds per LSB
 
-    uint8_t _pad[4];
+    uint16_t avg_command_time;  // 1 millisecond per LSB
+
+    uint8_t _pad[2];
 };
 static_assert(sizeof(PrimaryStatusLF) == 28);
 
