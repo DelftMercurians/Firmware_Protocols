@@ -76,6 +76,7 @@ struct RobotCommand_ {
         MAGNET_MODE_ON = 0x7, // Turn on magnet mode in both directions
         MAGNET_MODE_X_ONLY = 0x8,   // Turn on magnet mode in the lateral direction
         MAGNET_MODE_Y_ONLY = 0x9,   // Turn on magnet mode in the forwards/backwards direction
+        CALIBRATE_TOF = 0xA,   // Calibrate the time of flight sensor
     };
 
     KickerCommand kicker_command : 3;
@@ -163,6 +164,7 @@ enum class RobotCommand : uint8_t {
 
     CALIBRATE_IMU = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_IMU),  // Calibrate the IMU
     CALIBRATE_BB = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_BB),    // Calibrate the breakbeam sensor
+    CALIBRATE_TOF = RobotCommand_::to_byte_static(RobotCommand_::Auxilliary::CALIBRATE_TOF),    // Calibrate the time of flight sensor
 };
 
 struct GenericCommand {
