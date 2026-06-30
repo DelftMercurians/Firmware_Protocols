@@ -292,6 +292,30 @@ enum class Variable : uint8_t {
     REFLEX_KICK_MAX_COUNT = 0xA8,
 
     KICKER_COOLDOWN_TIME = 0xA9,
+
+    // Magnet-mode (ToF ball-capture) tuning -- registered READWRITE for live tuning.
+    MAGNET_FWD_SIGN  = 0xAA,
+    MAGNET_LAT_SIGN  = 0xAB,
+    MAGNET_TARGET_X  = 0xAC,
+    MAGNET_TARGET_Y  = 0xAD,
+    MAGNET_KP_FWD    = 0xAE,
+    MAGNET_KP_LAT    = 0xAF,
+    MAGNET_V_MAX     = 0xB0,
+    MAGNET_LIN_ACCEL = 0xB1,
+    MAGNET_DEADBAND  = 0xB2,
+    MAGNET_CONF_MIN  = 0xB3,
+    MAGNET_ENV_FWD   = 0xB4,
+    MAGNET_ENV_LAT   = 0xB5,
+    MAGNET_LOST_MS   = 0xB6,
+    MAGNET_TOTAL_MS  = 0xB7,
+    MAGNET_REGRAB_MS = 0xB8,
+    MAGNET_BLINDSPOT = 0xB9,
+    MAGNET_LUNGE_MS  = 0xBA,
+    MAGNET_LUNGE_VX  = 0xBB,
+    MAGNET_DRIBBLER  = 0xBC,
+    MAGNET_KP_YAW    = 0xBD,
+    MAGNET_WZ_MAX    = 0xBE,
+    MAGNET_MAX_FACE  = 0xBF,
 };
 
 } // namespace HG
