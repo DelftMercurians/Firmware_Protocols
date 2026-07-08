@@ -143,6 +143,7 @@ void CustomRF24_Robot::handleMultiConfigMessage(Radio::MultiConfigMessage mcm) {
             }
             break;
         default:
+            this->logger->warn("radio", "Unsupported config operation received: %u", static_cast<unsigned>(mcm.operation));
             return;
     }
 }
@@ -241,13 +242,7 @@ bool CustomRF24_Robot::receiveAndCallback() {
             // Serial.printf(" <%u> NONE\n", id);
             break;
         default:
-            //Unknown message type
-            // Serial.println(" Unknown message type received!");
-            // uint8_t *data = (uint8_t*) &msg;
-            // for(uint8_t i = 0; i < 32; i++) {
-            //     Serial.printf(" 0x%02X", data[i]);
-            // }
-            // Serial.println();
+            this->logger->warn("radio", "Unknown message type received: %u", static_cast<unsigned>(msg.mt));
             return false;
     }
     return false;
