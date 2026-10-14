@@ -37,7 +37,7 @@ class CustomRF24 : public RF24 {
 const uint8_t MAX_TX_BUFFER = 5;
 class CustomRF24_Robot : public CustomRF24 {
     public:
-        CustomRF24_Robot();
+        CustomRF24_Robot(void* status_task);
         
         bool init(uint8_t robot, uint8_t channel, rf24_pa_dbm_e pa_level = RF24_PA_MIN);
 
@@ -71,11 +71,18 @@ class CustomRF24_Robot : public CustomRF24 {
         // Call in loop, handles all communications
         bool run();
 
-        // Register message specific callbacks
-        template<typename T>
-        void registerCallback(void (*fun)(T));
+        void registerCallback(void (*fun)(void*, Radio::Command)) { callback_command = fun; }
+        void registerCallback(void (*fun)(void*, Radio::GlobalCommand)) { callback_gcommand = fun; }
+        void registerCallback(void (*fun)(void*, Radio::Message)) { callback_msg = fun; }
+        void registerCallback(void (*fun)(void*, Radio::PrimaryStatusHF)) { callback_status_hf = fun; }
+        void registerCallback(void (*fun)(void*, Radio::PrimaryStatusLF)) { callback_status_lf = fun; }
+        void registerCallback(void (*fun)(void*, Radio::ImuReadings)) { callback_imu_readings = fun; }
+        void registerCallback(void (*fun)(void*, Radio::OdometryReading)) { callback_odo_reading = fun; }
+        void registerCallback(void (*fun)(void*, Radio::OverrideOdometry)) { callback_override_odo = fun; }
 
     private:
+
+        void *status_task;
         
         enum class WIDTH : uint8_t {
             B8,
@@ -114,15 +121,15 @@ class CustomRF24_Robot : public CustomRF24 {
         }
 
         // Callbacks for different message types
-        void (*callback_command)(Radio::Command) = nullptr;
-        void (*callback_status_hf)(Radio::PrimaryStatusHF) = nullptr;
-        void (*callback_status_lf)(Radio::PrimaryStatusLF) = nullptr;
-        void (*callback_imu_readings)(Radio::ImuReadings) = nullptr;
-        void (*callback_odo_reading)(Radio::OdometryReading) = nullptr;
-        void (*callback_override_odo)(Radio::OverrideOdometry) = nullptr;
-        void (*callback_gcommand)(Radio::GlobalCommand) = nullptr;
+        void (*callback_command)(void*, Radio::Command) = nullptr;
+        void (*callback_status_hf)(void*, Radio::PrimaryStatusHF) = nullptr;
+        void (*callback_status_lf)(void*, Radio::PrimaryStatusLF) = nullptr;
+        void (*callback_imu_readings)(void*, Radio::ImuReadings) = nullptr;
+        void (*callback_odo_reading)(void*, Radio::OdometryReading) = nullptr;
+        void (*callback_override_odo)(void*, Radio::OverrideOdometry) = nullptr;
+        void (*callback_gcommand)(void*, Radio::GlobalCommand) = nullptr;
 
-        void (*callback_msg)(Radio::Message) = nullptr;
+        void (*callback_msg)(void*, Radio::Message) = nullptr;
 };
 
 class CustomRF24_Base : public CustomRF24 {

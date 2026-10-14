@@ -3,8 +3,9 @@
 
 // --------------ROBOT------------------ //
 
-CustomRF24_Robot::CustomRF24_Robot()
+CustomRF24_Robot::CustomRF24_Robot(void* status_task)
     : CustomRF24(RadioPins::RobotPinMap.ce, RadioPins::RobotPinMap.cs),
+        status_task(status_task),
         tx_buffer_len{0}
 {
     if (RadioPins::RobotPinMap.spi_bus == RadioPins::SpiBus::Spi_1) {
@@ -193,7 +194,7 @@ bool CustomRF24_Robot::receiveAndCallback() {
     receiveMessage(msg);
 
     if(callback_msg != nullptr){
-        callback_msg(msg);
+        callback_msg(status_task, msg);
     }
     // TODO: can be replaced by a template
     switch(msg.mt) {
@@ -203,37 +204,37 @@ bool CustomRF24_Robot::receiveAndCallback() {
             return false;
         case Radio::MessageType::Command:
             if(callback_command != nullptr){
-                callback_command(msg.msg.c);
+                callback_command(status_task, msg.msg.c);
             }
             return true;
         case Radio::MessageType::GlobalCommand:
             if(callback_gcommand != nullptr){
-                callback_gcommand(msg.msg.gc);
+                callback_gcommand(status_task, msg.msg.gc);
             }
             return true;
         case Radio::MessageType::PrimaryStatusHF:
             if(callback_status_hf != nullptr){
-                callback_status_hf(msg.msg.ps_hf);
+                callback_status_hf(status_task, msg.msg.ps_hf);
             }
             return false;
         case Radio::MessageType::PrimaryStatusLF:
             if(callback_status_lf != nullptr){
-                callback_status_lf(msg.msg.ps_lf);
+                callback_status_lf(status_task, msg.msg.ps_lf);
             }
             return false;
         case Radio::MessageType::ImuReadings:
             if(callback_imu_readings != nullptr){
-                callback_imu_readings(msg.msg.ir);
+                callback_imu_readings(status_task, msg.msg.ir);
             }
             return false;
         case Radio::MessageType::OdometryReading:
             if(callback_odo_reading != nullptr){
-                callback_odo_reading(msg.msg.odo);
+                callback_odo_reading(status_task, msg.msg.odo);
             }
             return false;
         case Radio::MessageType::OverrideOdometry:
             if(callback_override_odo != nullptr){
-                callback_override_odo(msg.msg.over_odo);
+                callback_override_odo(status_task, msg.msg.over_odo);
             }
             return false;
         case Radio::MessageType::None:
@@ -252,47 +253,3 @@ bool CustomRF24_Robot::receiveAndCallback() {
     }
     return false;
 }
-
-
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::Command>(void (*fun)(Radio::Command)) {
-    callback_command = fun;
-}
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::GlobalCommand>(void (*fun)(Radio::GlobalCommand)) {
-    callback_gcommand = fun;
-}
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::Message>(void (*fun)(Radio::Message)) {
-    callback_msg = fun;
-}
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::PrimaryStatusHF>(void (*fun)(Radio::PrimaryStatusHF)) {
-    callback_status_hf = fun;
-}
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::PrimaryStatusLF>(void (*fun)(Radio::PrimaryStatusLF)) {
-    callback_status_lf = fun;
-}
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::ImuReadings>(void (*fun)(Radio::ImuReadings)) {
-    callback_imu_readings = fun;
-}
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::OdometryReading>(void (*fun)(Radio::OdometryReading)) {
-    callback_odo_reading = fun;
-}
-
-template<>
-void CustomRF24_Robot::registerCallback<Radio::OverrideOdometry>(void (*fun)(Radio::OverrideOdometry)) {
-    callback_override_odo = fun;
-}
-
-
